@@ -27,6 +27,7 @@ return {
 		mason_lspconfig.setup({
 			-- list of servers for mason to install
 			ensure_installed = {
+				"tsserver",
 				"html",
 				"cssls",
 				"tailwindcss",
@@ -36,7 +37,11 @@ return {
 				"emmet_ls",
 				"prismals",
 				"pyright",
-				"tsserver",
+			},
+			handlers = {
+				function(server_name)
+					require("lspconfig")[server_name].setup({})
+				end,
 			},
 		})
 
