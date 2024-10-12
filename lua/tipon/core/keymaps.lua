@@ -1,13 +1,14 @@
 -- set leader key to space
 vim.g.mapleader = " "
+vim.g.maplocalleader = ","
 
 local keymap = vim.keymap -- for conciseness
 
 ---------------------
 -- General Keymaps -------------------
 
--- use jk to exit insert mode
-keymap.set("i", "jk", "<ESC>", { desc = "Exit insert mode with jk" })
+-- Map a key (e.g., <C-b>) to show native key bindings
+keymap.set("n", "<C-b>", ":WhichKey<CR>", { desc = "Key bindings", silent = true })
 
 -- clear search highlights
 keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights" })
