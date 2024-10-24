@@ -31,3 +31,24 @@ keymap.set("n", "<leader>tx", "<cmd>tabclose<CR>", { desc = "Close current tab" 
 keymap.set("n", "<leader>tn", "<cmd>tabn<CR>", { desc = "Go to next tab" }) --  go to next tab
 keymap.set("n", "<leader>tp", "<cmd>tabp<CR>", { desc = "Go to previous tab" }) --  go to previous tab
 keymap.set("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Open current buffer in new tab" }) --  move current buffer to new tab
+
+-- ColorSchemes
+--
+-- Background
+keymap.set("n", "<leader>kd", "<cmd>set background=dark<CR>", { desc = "Dark background" })
+keymap.set("n", "<leader>kl", "<cmd>set background=light<CR>", { desc = "Light background" })
+--
+--
+-- tokyonight
+keymap.set("n", "<leader>ktd", "<cmd>colorscheme tokyonight-day<CR>", { desc = "tokyonight-day" })
+keymap.set("n", "<leader>ktm", "<cmd>colorscheme tokyonight-moon<CR>", { desc = "tokyonight-moon" })
+keymap.set("n", "<leader>ktn", "<cmd>colorscheme tokyonight-night<CR>", { desc = "tokyonight-night" })
+keymap.set("n", "<leader>kts", "<cmd>colorscheme tokyonight-storm<CR>", { desc = "tokyonight-storm" })
+
+-- kanagawa
+keymap.set("n", "<leader>kkd", "<cmd>colorscheme kanagawa-dragon<CR>", { desc = "kanagawa-dragon" })
+keymap.set("n", "<leader>kkl", "<cmd>colorscheme kanagawa-lotus<CR>", { desc = "kanagawa-lotus" })
+keymap.set("n", "<leader>kkw", "<cmd>colorscheme kanagawa-wave<CR>", { desc = "kanagawa-wave" })
+
+-- gruvbox
+keymap.set("n", "<leader>kg", "<cmd>colorscheme gruvbox<CR>", { desc = "gruvbox" })

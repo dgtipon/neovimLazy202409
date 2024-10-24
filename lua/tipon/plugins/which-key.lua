@@ -194,6 +194,7 @@ return {
 			{ "<leader>e", group = "Explorer", nowait = true, remap = false },
 			{ "<leader>f", group = "Find", nowait = true, remap = false },
 			{ "<leader>h", group = "Hunk", nowait = true, remap = false },
+			{ "<leader>k", group = "Colorschemes", nowait = true, remap = false },
 			{ "<leader>s", group = "Split", nowait = true, remap = false },
 			{ "<leader>t", group = "Tab", nowait = true, remap = false },
 			{ "<leader>w", group = "Session", nowait = true, remap = false },
