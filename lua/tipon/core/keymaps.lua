@@ -7,8 +7,8 @@ local keymap = vim.keymap -- for conciseness
 ---------------------
 -- General Keymaps -------------------
 
--- Map a key (e.g., <C-b>) to show native key bindings
-keymap.set("n", "<C-b>", ":WhichKey<CR>", { desc = "Key bindings", silent = true })
+-- Map a key to show native key bindings
+keymap.set("n", "<leader><Space>", ":WhichKey<CR>", { desc = "WhichKey", silent = true })
 
 -- clear search highlights
 keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights" })
