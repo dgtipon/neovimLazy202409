@@ -36,7 +36,8 @@ return {
 				"graphql",
 				"emmet_ls",
 				"prismals",
-				"pyright",
+				"pyright", -- python LSP
+				-- "pylance", -- python LSP but bigger
 			},
 			handlers = {
 				function(server_name)
