@@ -13,11 +13,12 @@ return {
 		-- 	local fg_dark = "#B4D0E9"
 		-- 	local fg_gutter = "#627E97"
 		-- 	local border = "#547998"
-
+		-- 	local red = "#ff0000"
+		--
 		-- 	require("tokyonight").setup({
 		-- 		style = "night",
 		-- 		on_colors = function(colors)
-		-- 			colors.bg = bg
+		-- 			colors.bg = red -- bg
 		-- 			colors.bg_dark = bg_dark
 		-- 			colors.bg_float = bg_dark
 		-- 			colors.bg_highlight = bg_highlight
@@ -34,8 +35,7 @@ return {
 		-- 			colors.fg_sidebar = fg_dark
 		-- 		end,
 		-- 	})
-		-- load the colorscheme here
-		-- vim.cmd([[colorscheme tokyonight]])
+		--
 		-- end,
 	},
 }
