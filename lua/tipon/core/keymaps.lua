@@ -35,40 +35,40 @@ keymap.set("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Open current buffer
 -- ColorSchemes
 
 -- Background
-keymap.set("n", "<leader>kd", "<cmd>set background=dark<CR>", { desc = "Dark background" })
-keymap.set("n", "<leader>kl", "<cmd>set background=light<CR>", { desc = "Light background" })
+keymap.set("n", "<leader>cd", "<cmd>set background=dark<CR>", { desc = "Dark background" })
+keymap.set("n", "<leader>cl", "<cmd>set background=light<CR>", { desc = "Light background" })
 
 -- tokyonight
-keymap.set("n", "<leader>ktd", "<cmd>colorscheme tokyonight-day<CR>", { desc = "Tokyonight-day" })
-keymap.set("n", "<leader>ktm", "<cmd>colorscheme tokyonight-moon<CR>", { desc = "Tokyonight-moon" })
-keymap.set("n", "<leader>ktn", "<cmd>colorscheme tokyonight-night<CR>", { desc = "Tokyonight-night" })
-keymap.set("n", "<leader>kts", "<cmd>colorscheme tokyonight-storm<CR>", { desc = "Tokyonight-storm" })
+keymap.set("n", "<leader>ctd", "<cmd>colorscheme tokyonight-day<CR>", { desc = "Tokyonight-day" })
+keymap.set("n", "<leader>ctm", "<cmd>colorscheme tokyonight-moon<CR>", { desc = "Tokyonight-moon" })
+keymap.set("n", "<leader>ctn", "<cmd>colorscheme tokyonight-night<CR>", { desc = "Tokyonight-night" })
+keymap.set("n", "<leader>cts", "<cmd>colorscheme tokyonight-storm<CR>", { desc = "Tokyonight-storm" })
 
 -- kanagawa
-keymap.set("n", "<leader>kkd", "<cmd>colorscheme kanagawa-dragon<CR>", { desc = "Kanagawa-dragon" })
-keymap.set("n", "<leader>kkl", "<cmd>colorscheme kanagawa-lotus<CR>", { desc = "Kanagawa-lotus" })
-keymap.set("n", "<leader>kkw", "<cmd>colorscheme kanagawa-wave<CR>", { desc = "Kanagawa-wave" })
+keymap.set("n", "<leader>ckd", "<cmd>colorscheme kanagawa-dragon<CR>", { desc = "Kanagawa-dragon" })
+keymap.set("n", "<leader>ckl", "<cmd>colorscheme kanagawa-lotus<CR>", { desc = "Kanagawa-lotus" })
+keymap.set("n", "<leader>ckw", "<cmd>colorscheme kanagawa-wave<CR>", { desc = "Kanagawa-wave" })
 
 -- gruvbox
-keymap.set("n", "<leader>kg", "<cmd>colorscheme gruvbox<CR>", { desc = "Gruvbox" })
+keymap.set("n", "<leader>cg", "<cmd>colorscheme gruvbox<CR>", { desc = "Gruvbox" })
 
 -- bamboo
-keymap.set("n", "<leader>kb", "<cmd>colorscheme bamboo<CR>", { desc = "Bamboo" })
+keymap.set("n", "<leader>cb", "<cmd>colorscheme bamboo<CR>", { desc = "Bamboo" })
 
 -- catppuccin
-keymap.set("n", "<leader>kcl", "<cmd>colorscheme catppuccin-latte<CR>", { desc = "Catppuccin-latte" })
-keymap.set("n", "<leader>kcf", "<cmd>colorscheme catppuccin-frappe<CR>", { desc = "Catppuccin-frappe" })
-keymap.set("n", "<leader>kcm", "<cmd>colorscheme catppuccin-macchiato<CR>", { desc = "Catppuccin-macchiato" })
-keymap.set("n", "<leader>kco", "<cmd>colorscheme catppuccin-mocha<CR>", { desc = "Catppuccin-mocha" })
+keymap.set("n", "<leader>ccl", "<cmd>colorscheme catppuccin-latte<CR>", { desc = "Catppuccin-latte" })
+keymap.set("n", "<leader>ccf", "<cmd>colorscheme catppuccin-frappe<CR>", { desc = "Catppuccin-frappe" })
+keymap.set("n", "<leader>ccm", "<cmd>colorscheme catppuccin-macchiato<CR>", { desc = "Catppuccin-macchiato" })
+keymap.set("n", "<leader>cco", "<cmd>colorscheme catppuccin-mocha<CR>", { desc = "Catppuccin-mocha" })
 
 -- nightfox
-keymap.set("n", "<leader>knc", "<cmd>colorscheme carbonfox<CR>", { desc = "Carbonfox" })
-keymap.set("n", "<leader>knw", "<cmd>colorscheme dawnfox<CR>", { desc = "Dawnfox" })
-keymap.set("n", "<leader>kny", "<cmd>colorscheme dayfox<CR>", { desc = "Dayfox" })
-keymap.set("n", "<leader>knk", "<cmd>colorscheme duskfox<CR>", { desc = "Duskfox" })
-keymap.set("n", "<leader>knn", "<cmd>colorscheme nordfox<CR>", { desc = "Nordfox" })
-keymap.set("n", "<leader>knn", "<cmd>colorscheme nightfox<CR>", { desc = "Nightfox" })
-keymap.set("n", "<leader>knt", "<cmd>colorscheme terafox<CR>", { desc = "Terafox" })
+keymap.set("n", "<leader>cnc", "<cmd>colorscheme carbonfox<CR>", { desc = "Carbonfox" })
+keymap.set("n", "<leader>cnw", "<cmd>colorscheme dawnfox<CR>", { desc = "Dawnfox" })
+keymap.set("n", "<leader>cny", "<cmd>colorscheme dayfox<CR>", { desc = "Dayfox" })
+keymap.set("n", "<leader>cnk", "<cmd>colorscheme duskfox<CR>", { desc = "Duskfox" })
+keymap.set("n", "<leader>cnn", "<cmd>colorscheme nordfox<CR>", { desc = "Nordfox" })
+keymap.set("n", "<leader>cnn", "<cmd>colorscheme nightfox<CR>", { desc = "Nightfox" })
+keymap.set("n", "<leader>cnt", "<cmd>colorscheme terafox<CR>", { desc = "Terafox" })
 
 -- everforest
-keymap.set("n", "<leader>ke", "<cmd>colorscheme everforest<CR>", { desc = "Everforest" })
+keymap.set("n", "<leader>ce", "<cmd>colorscheme everforest<CR>", { desc = "Everforest" })

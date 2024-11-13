@@ -190,20 +190,20 @@ return {
 		end
 
 		which_key.add({
-			{ "<leader>c", group = "Code suggestions", nowait = true, remap = false },
+			{ "<leader>k", group = "Code suggestions", nowait = true, remap = false },
 			{ "<leader>e", group = "Explorer", nowait = true, remap = false },
 			{ "<leader>f", group = "Find", nowait = true, remap = false },
 			{ "<leader>h", group = "Hunk", nowait = true, remap = false },
 			{
-				"<leader>k",
+				"<leader>c",
 				group = "Colorschemes",
 				nowait = true,
 				remap = false,
-				{ "<leader>kc", name = "Catppuccin", nowait = true, remap = false },
-				{ "<leader>ke", name = "Everforest", nowait = true, remap = false },
-				{ "<leader>kk", name = "Kanagawa", nowait = true, remap = false },
-				{ "<leader>kn", name = "Knightfox", nowait = true, remap = false },
-				{ "<leader>kt", name = "Tokyonight", nowait = true, remap = false },
+				{ "<leader>cc", name = "4 Catppuccin", nowait = true, remap = false },
+				{ "<leader>ce", name = "Everforest", nowait = true, remap = false },
+				{ "<leader>ck", name = "3 Kanagawa", nowait = true, remap = false },
+				{ "<leader>cn", name = "7 Knightfox", nowait = true, remap = false },
+				{ "<leader>ct", name = "4 Tokyonight", nowait = true, remap = false },
 			},
 			{ "<leader>m", group = "Format", nowait = true, remap = false },
 			{ "<leader>n", group = "Search highlights", nowait = true, remap = false },
