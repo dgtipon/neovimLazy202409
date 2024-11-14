@@ -208,7 +208,6 @@ return {
 			{ "<leader>m", group = "Format", nowait = true, remap = false },
 			{ "<leader>n", group = "Search highlights", nowait = true, remap = false },
 			{ "<leader>s", group = "Split", nowait = true, remap = false },
-			{ "<leader>t", group = "Tab", nowait = true, remap = false },
 			{ "<leader>w", group = "Session", nowait = true, remap = false },
 			{ "<leader>x", group = "Trouble", nowait = true, remap = false },
 		})
