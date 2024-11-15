@@ -64,7 +64,7 @@ return {
 					api.node.open.horizontal(node)
 					-- Focus back to the original window (nvim-tree)
 					vim.api.nvim_set_current_win(cur_win)
-				end, opts("Horizontal Split, focus on Explorer"))
+				end, opts("Horizontal Split, focus to Explorer"))
 				vim.keymap.set("n", "<A-v>", function()
 					-- First, ensure nvim-tree is focused
 					api.tree.focus()
@@ -76,7 +76,7 @@ return {
 					api.node.open.vertical(node)
 					-- Focus back to the original window (nvim-tree)
 					vim.api.nvim_set_current_win(cur_win)
-				end, opts("Vertical Split, focus on Explorer"))
+				end, opts("Vertical Split, focus to Explorer"))
 
 				-- Add other mappings as needed
 
