@@ -11,7 +11,10 @@ local keymap = vim.keymap -- for conciseness
 keymap.set("n", "<leader><Space>", ":WhichKey<CR>", { desc = "WhichKey", silent = true })
 
 -- clear search highlights
-keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights" })
+keymap.set("n", "<leader>o", ":nohl<CR>", { desc = "Highlights Off" })
+
+-- toggle window maximize/minimize of a split
+keymap.set("n", "<C-w>m", ":MaximizerToggle<CR>", { desc = "Max/min toggle of split" })
 
 -- delete single character without copying into register
 -- keymap.set("n", "x", '"_x')
