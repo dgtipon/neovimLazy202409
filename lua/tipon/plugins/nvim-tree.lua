@@ -89,7 +89,7 @@ return {
 		local keymap = vim.keymap -- for conciseness
 		local api = require("nvim-tree.api")
 
-		keymap.set("n", "<leader>ec", "<cmd>NvimTreeCollapse<CR>", { desc = "Ctollapse file explorer" }) -- collapse file explorer
+		keymap.set("n", "<leader>ec", "<cmd>NvimTreeCollapse<CR>", { desc = "Collapse file explorer" }) -- collapse file explorer
 		keymap.set("n", "<leader>ee", "<cmd>NvimTreeToggle<CR>", { desc = "Toggle file explorer" }) -- toggle file explorer
 		keymap.set(
 			"n",
@@ -110,6 +110,6 @@ return {
 			-- Change the root of nvimtree
 			api.tree.change_root(current_file_dir)
 			api.tree.toggle()
-		end, { desc = "Focus file explorer on current dir" })
+		end, { desc = "Explorer focus in dir of file" })
 	end,
 }
