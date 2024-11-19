@@ -87,15 +87,29 @@ return {
 
 		-- set keymaps
 		local keymap = vim.keymap -- for conciseness
+		local api = require("nvim-tree.api")
 
+		keymap.set("n", "<leader>ec", "<cmd>NvimTreeCollapse<CR>", { desc = "Ctollapse file explorer" }) -- collapse file explorer
 		keymap.set("n", "<leader>ee", "<cmd>NvimTreeToggle<CR>", { desc = "Toggle file explorer" }) -- toggle file explorer
 		keymap.set(
 			"n",
-			"<leader>ef",
+			"<leader>et",
 			"<cmd>NvimTreeFindFileToggle<CR>",
 			{ desc = "Toggle file explorer on current file" }
 		) -- toggle file explorer on current file
-		keymap.set("n", "<leader>ec", "<cmd>NvimTreeCollapse<CR>", { desc = "Collapse file explorer" }) -- collapse file explorer
 		keymap.set("n", "<leader>er", "<cmd>NvimTreeRefresh<CR>", { desc = "Refresh file explorer" }) -- refresh file explorer
+		keymap.set("n", "<leader>ef", function()
+			-- Close nvim-tree if it's open
+			if api.tree.is_visible() then
+				api.tree.close()
+			end
+			-- Get the directory of the current file
+			local current_file_dir = vim.fn.expand("%:p:h")
+			-- Change the current working directory to the directory of the current file
+			vim.cmd("cd " .. current_file_dir)
+			-- Change the root of nvimtree
+			api.tree.change_root(current_file_dir)
+			api.tree.toggle()
+		end, { desc = "Focus file explorer on current dir" })
 	end,
 }
