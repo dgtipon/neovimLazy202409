@@ -111,5 +111,20 @@ return {
 			api.tree.change_root(current_file_dir)
 			api.tree.toggle()
 		end, { desc = "Explorer focus in dir of file" })
+		keymap.set("n", "<leader>en", function()
+			-- Make sure nvimtree has been opend and initialized
+			api.tree.toggle()
+			-- Close nvim-tree if it's open
+			if api.tree.is_visible() then
+				api.tree.close()
+			end
+			-- Change the root of nvim-tree to the specified directory
+			-- Note: We use vim.fn.expand to expand the home directory
+			local new_root = vim.fn.expand("~/.config/nvim/lua")
+			api.tree.change_root(new_root)
+			-- Toggle nvim-tree to open it again
+			api.tree.toggle()
+			api.tree.expand_all()
+		end, { desc = "Explorer focus in dir of nvim" })
 	end,
 }
