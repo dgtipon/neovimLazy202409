@@ -13,9 +13,6 @@ keymap.set("n", "<leader><Space>", ":WhichKey<CR>", { desc = "WhichKey", silent 
 -- clear search highlights
 keymap.set("n", "<leader>o", ":nohl<CR>", { desc = "Highlights Off" })
 
--- current working directory set to that of current file
-keymap.set("n", "<leader>w", ":cd %:p:h<CR>", { desc = "Current file > pwd" })
-
 -- toggle window maximize/minimize of a split
 keymap.set("n", "<C-w>m", ":MaximizerToggle<CR>", { desc = "Max/min toggle of split" })
 
@@ -28,6 +25,10 @@ keymap.set("n", "<leader>-", "<C-x>", { desc = "Decrement number" }) -- decremen
 
 -- Tabs
 keymap.set("n", "go", "<cmd>tabnew<CR>", { desc = "Open new tab" }) -- Open new tab
+
+-- change directory
+keymap.set("n", "<leader>n", "<cmd>cd .config/nvim<CR>", { desc = ".config/nvim" })
+keymap.set("n", "<leader>w", ":cd %:p:h<CR>", { desc = "Current file > pwd" })
 
 -- ColorSchemes
 
