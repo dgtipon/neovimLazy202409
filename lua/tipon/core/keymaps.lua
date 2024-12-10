@@ -70,3 +70,6 @@ keymap.set("n", "<leader>cnt", "<cmd>colorscheme terafox<CR>", { desc = "Terafox
 
 -- everforest
 keymap.set("n", "<leader>ce", "<cmd>colorscheme everforest<CR>", { desc = "Everforest" })
+
+-- dracula
+keymap.set("n", "<leader>cD", "<cmd>colorscheme dracula<CR>", { desc = "Dracula" })
