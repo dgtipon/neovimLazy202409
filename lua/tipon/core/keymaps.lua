@@ -16,6 +16,14 @@ keymap.set("n", "<leader>o", ":nohl<CR>", { desc = "Highlights Off" })
 -- toggle window maximize/minimize of a split
 keymap.set("n", "<C-w>m", ":MaximizerToggle<CR>", { desc = "Max/min toggle of split" })
 
+-- vertical split, file directory to pwd, terminal, input
+keymap.set(
+	"n",
+	"<C-w>S",
+	":split<CR>:cd %:p:h<CR>:terminal<CR>:startinsert<CR>",
+	{ silent = true, desc = "Open terminal in h split" }
+)
+
 -- delete single character without copying into register
 -- keymap.set("n", "x", '"_x')
 
