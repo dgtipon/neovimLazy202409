@@ -39,6 +39,7 @@ return {
 				"pyright", -- python LSP
 				-- "pylance", -- python LSP but bigger
 			},
+			automatic_installation = true,
 			handlers = {
 				function(server_name)
 					require("lspconfig")[server_name].setup({})
