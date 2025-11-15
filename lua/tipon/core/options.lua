@@ -44,3 +44,14 @@ opt.splitbelow = true -- split horizontal window to the bottom
 -- turn off swapfile
 opt.swapfile = false
 
+-- add english dictionary and suggestion files to rtp
+opt.runtimepath:append("/usr/share/vim/vimfiles")
+
+-- Enable spell checking for Markdown files
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "markdown",
+	callback = function()
+		vim.opt_local.spell = true
+		vim.opt_local.spelllang = "en_us" -- Change to "en_gb" for British English if preferred
+	end,
+})
