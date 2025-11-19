@@ -4,7 +4,7 @@ return {
 	dependencies = {
 		"hrsh7th/cmp-nvim-lsp",
 		{ "antosha417/nvim-lsp-file-operations", config = true },
-		{ "folke/neodev.nvim", opts = {} },
+		{ "folke/lazydev.nvim", ft = "lua", opts = {} },
 		"williamboman/mason-lspconfig.nvim", -- Ensure this dependency is listed
 	},
 	config = function()
@@ -98,6 +98,9 @@ return {
 			handlers = {
 				-- default handler for installed servers
 				function(server_name)
+					if server_name == "lua_ls" then
+						return
+					end
 					lspconfig[server_name].setup({
 						capabilities = capabilities,
 					})
@@ -146,15 +149,19 @@ return {
 						capabilities = capabilities,
 						settings = {
 							Lua = {
-								-- make the language server recognize "vim" global
-								diagnostics = {
-									globals = { "vim" },
-								},
 								completion = {
 									callSnippet = "Replace",
 								},
 							},
 						},
+					})
+				end,
+				["stylua"] = function()
+					lspconfig["stylua"].setup({
+						capabilities = capabilities,
+						cmd = { "stylua", "--lsp" }, -- Enables LSP mode
+						filetypes = { "lua" },
+						root_dir = lspconfig.util.root_pattern(".git", "stylua.toml", ".stylua.toml"),
 					})
 				end,
 			},
