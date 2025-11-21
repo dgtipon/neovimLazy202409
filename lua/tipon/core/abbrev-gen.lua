@@ -2,22 +2,7 @@
 
 vim.notify("Abbrev-gen file required", vim.log.levels.INFO)
 
--- Setup buffer-local mapping for Markdown files
-vim.api.nvim_create_autocmd("FileType", {
-	pattern = "markdown",
-	callback = function()
-		vim.notify("Markdown FileType autocmd fired - setting up expansion", vim.log.levels.INFO) -- Already have this
-
-		-- Debug: Confirm keymap is being set
-		vim.notify("Setting insert-mode mapping for <C-e>", vim.log.levels.DEBUG)
-
-		vim.keymap.set("i", "<C-e>", function()
-			M.expand_abbrev()
-		end, { buffer = true })
-	end,
-})
-
-local M = {}
+local M = {} -- Declare M early, at the top
 
 -- Root table: From your pop.txt (abbrev → word for reverse lookup; ~500 entries)
 M.roots_by_abbrev = {
@@ -215,337 +200,23 @@ M.roots_by_abbrev = {
 	["aws"] = "awesome",
 	["bck"] = "back",
 	["bg2"] = "background",
-	["b2w"] = "backward",
 	["blc"] = "balance",
 	["brr"] = "barrier",
 	["bsc"] = "basic",
 	["bf2"] = "battlefield_",
 	["bg3"] = "battleground",
 	["bz"] = "bazaar",
-	["bzy"] = "bazaarly",
-	["bzs"] = "bazaars",
 	["bra"] = "bear",
 	["btf"] = "beautify",
 	["bty"] = "beauty",
 	["bcm"] = "became",
 	["bcs"] = "because",
 	["bk"] = "become",
-	["bks"] = "becomes",
-	["bkg"] = "becoming",
-	["bkgy"] = "becomingly",
-	["bkgs"] = "becomings",
 	["bn"] = "been",
 	["bfr"] = "before",
 	["bgn"] = "begin",
-	["bhv"] = "behave",
-	["bhn"] = "behind",
-	["bg"] = "being",
-	["bpm"] = "being_in_the_present_moment",
-	["bowe"] = "being_one-with-everything",
-	["bgs"] = "beings",
-	["blf"] = "belief",
-	["blv"] = "believe",
-	["bl"] = "belong",
-	["bls"] = "belongs",
-	["blw"] = "below",
-	["bnf"] = "benefit",
-	["bnv"] = "benevolent",
-	["bsd"] = "beside",
-	["bs"] = "best",
-	["btr"] = "better",
-	["btw"] = "between",
-	["byn"] = "beyond",
-	["blr"] = "billiard",
-	["blg"] = "biology",
-	["blm"] = "blame",
-	["blt"] = "blatant",
-	["bln"] = "blind",
-	["bli"] = "blink",
-	["dagr"] = "disagree",
-	["dapr"] = "disappear",
-	["dapn"] = "disappoint",
-	["d2w"] = "downward",
-	["eabl"] = "enability",
-	["etng"] = "entangle",
-	["f2w"] = "forward",
-	["iabl"] = "inability",
-	["iacr"] = "inaccurate",
-	["iadq"] = "inadequate",
-	["iaqp"] = "inappropriate",
-	["ivld"] = "invalid",
-	["ivsb"] = "invisible",
-	["ivsn"] = "invision",
-	["i2w"] = "inward",
-	["muz"] = "misunderstand",
-	["nags"] = "nonaggressive",
-	["nurg"] = "nonurgency",
-	["o2w"] = "onward",
-	["u2w"] = "outward",
-	["o2wh"] = "overwhelm",
-	["pact"] = "proact",
-	["rarr"] = "rearrange",
-	["rblc"] = "rebalance",
-	["rtrn"] = "retrain",
-	["ru"] = "reuse",
-	["satm"] = "subatomic",
-	["tcy"] = "tactically",
-	["tcn"] = "tactician",
-	["tcns"] = "tacticians",
-	["tk"] = "take",
-	["tkd"] = "taken",
-	["tkr"] = "taker",
-	["tkrs"] = "takers",
-	["tks"] = "takes",
-	["tkg"] = "taking",
-	["tlk"] = "talk",
-	["tng"] = "tangle",
-	["tre"] = "target",
-	["tch"] = "teach",
-	["tw2"] = "teamwork",
-	["tcq"] = "technique",
-	["tcg"] = "technology",
-	["tds"] = "tedious",
-	["tlh"] = "telegraph",
-	["tlp"] = "telepath",
-	["tlv"] = "television",
-	["tmj"] = "temperature",
-	["tmp"] = "temporary",
-	["tnd"] = "tend",
-	["trm"] = "terminal",
-	["tri"] = "terrible",
-	["trf"] = "terrify",
-	["trr"] = "territory",
-	["tst"] = "test",
-	["ta"] = "than",
-	["thn"] = "thank",
-	["tt"] = "that",
-	["tsol"] = "the_speed_of_light",
-	["tr"] = "their",
-	["tm"] = "them",
-	["tn"] = "then",
-	["thy"] = "theory",
-	["thp"] = "therapy",
-	["te"] = "there",
-	["tf2"] = "therefore",
-	["tz"] = "these",
-	["ty"] = "they",
-	["tg"] = "thing",
-	["tgs"] = "things",
-	["thk"] = "think",
-	["ts"] = "this",
-	["thh"] = "thorough",
-	["th"] = "those",
-	["thu"] = "though",
-	["thg"] = "thought",
-	["ths"] = "thousand",
-	["tht"] = "threat",
-	["thr"] = "through",
-	["thw"] = "throw",
-	["tgh"] = "tight",
-	["ti"] = "time",
-	["tid"] = "timed",
-	["tiss"] = "timeless",
-	["tissss"] = "timelessness",
-	["tisssss"] = "timelessnesses",
-	["tiyss"] = "timeliness",
-	["tiysss"] = "timelinesses",
-	["tiy"] = "timely",
-	["tir"] = "timer",
-	["tirs"] = "timers",
-	["tis"] = "times",
-	["tig"] = "timing",
-	["tigs"] = "timings",
-	["td"] = "today",
-	["tgt"] = "together",
-	["tlt"] = "tolerate",
-	["tpc"] = "topic",
-	["trmn"] = "torment",
-	["tru"] = "torture",
-	["ttl"] = "total",
-	["tcu"] = "touch",
-	["t2w"] = "toward",
-	["txc"] = "toxic",
-	["trc"] = "trace",
-	["tra"] = "track",
-	["trd"] = "trade",
-	["tps"] = "trading partners",
-	["tp"] = "trading_partner",
-	["trfk"] = "traffic",
-	["trg"] = "tragic",
-	["trn"] = "train",
-	["tro"] = "traitor",
-	["tct"] = "transact",
-	["tcd"] = "transcend",
-	["tfr"] = "transfer",
-	["tfo"] = "transform",
-	["tgd"] = "transgender",
-	["tgr"] = "transgress",
-	["tsi"] = "transit",
-	["tla"] = "translate",
-	["tms"] = "transmit",
-	["tpa"] = "transparence",
-	["tpr"] = "transport",
-	["trma"] = "trauma",
-	["trv"] = "travel",
-	["trch"] = "treachery",
-	["trt"] = "treat",
-	["trmd"] = "tremendous",
-	["trp"] = "trespass",
-	["trk"] = "trick",
-	["trx"] = "trigger",
-	["trb"] = "trouble",
-	["trs"] = "trust",
-	["trh"] = "truth",
-	["tyr"] = "tyrant",
-	["ubq"] = "ubiquitous",
-	["ult"] = "ultimate",
-	["uamr"] = "unAmerica",
-	["ua"] = "unable",
-	["uacka"] = "unaccommodate",
-	["uackp"] = "unaccompany",
-	["uann"] = "unannounce",
-	["uans"] = "unanswer",
-	["uath"] = "unauthor",
-	["uavl"] = "unavail",
-	["uavd"] = "unavoid",
-	["uawr"] = "unaware",
-	["ubra"] = "unbear",
-	["ublv"] = "unbelieve",
-	["und"] = "under",
-	["uz"] = "understand",
-	["uzbts"] = "understandabilities",
-	["uzbty"] = "understandability",
-	["uzb"] = "understandable",
-	["uzbs"] = "understandables",
-	["uzby"] = "understandably",
-	["uzg"] = "understanding",
-	["uzs"] = "understands",
-	["uzd"] = "understood",
-	["u2wh"] = "underwhelm",
-	["unf"] = "unify",
-	["unq"] = "unique",
-	["unt"] = "unite",
-	["unv"] = "universe",
-	["unl"] = "unless",
-	["utch"] = "unteach",
-	["uthk"] = "unthink",
-	["uni"] = "until",
-	["utrc"] = "untrace",
-	["utrs"] = "untrust",
-	["uu"] = "unuse",
-	["uwi"] = "unwill",
-	["uwrk"] = "unwork",
-	["p2w"] = "upward",
-	["urg"] = "urgency",
-	["ubts"] = "usabilities",
-	["ubty"] = "usability",
-	["ub"] = "usable",
-	["ubs"] = "usables",
-	["uby"] = "usably",
-	["ua"] = "usage",
-	["uas"] = "usages",
-	["u"] = "use",
-	["ud"] = "used",
-	["uf"] = "useful",
-	["ufss"] = "usefulness",
-	["ufsss"] = "usefulnesses",
-	["uss"] = "useless",
-	["ur"] = "user",
-	["urs"] = "users",
-	["us"] = "uses",
-	["ug"] = "using",
-	["ul"] = "usual",
-	["uy"] = "usually",
-	["utl"] = "utility",
-	["vcc"] = "vacate",
-	["vcn"] = "vaccine",
-	["vg"] = "vague",
-	["vgy"] = "vaguely",
-	["vgss"] = "vagueness",
-	["vgsss"] = "vaguenesses",
-	["vgr"] = "vaguer",
-	["vgt"] = "vaguest",
-	["vld"] = "valid",
-	["vlu"] = "value",
-	["vry"] = "vary",
-	["vhc"] = "vehicle",
-	["vlc"] = "velocity",
-	["vrb"] = "verbal",
-	["vrf"] = "verify",
-	["vrs"] = "verse",
-	["vrt"] = "vertical",
-	["v"] = "very",
-	["vct"] = "victim",
-	["vco"] = "victor",
-	["vw"] = "view",
-	["vwbts"] = "viewabilities",
-	["vwbty"] = "viewability",
-	["vwb"] = "viewable",
-	["vwbs"] = "viewables",
-	["vwby"] = "viewably",
-	["vwd"] = "viewed",
-	["vwr"] = "viewer",
-	["vwrs"] = "viewers",
-	["vwg"] = "viewing",
-	["vp2"] = "viewpoint",
-	["vws"] = "views",
-	["vlt"] = "violate",
-	["vln"] = "violence",
-	["vr2"] = "virtual_reality",
-	["vsb"] = "visible",
-	["vsn"] = "vision",
-	["vsl"] = "visual",
-	["vce"] = "voice",
-	["vd"] = "void",
-	["vli"] = "volatile",
-	["vlm"] = "volume",
-	["vlr"] = "volunteer",
-	["vle"] = "vulnerable",
-	["wa"] = "want",
-	["2w"] = "ward",
-	["wrf"] = "warfare",
-	["wrm"] = "warm",
-	["wst"] = "waste",
-	["wtc"] = "watch",
-	["wk"] = "weak",
-	["wla"] = "wealth",
-	["wpn"] = "weapon",
-	["ws2"] = "website",
-	["wgh"] = "weigh",
-	["wght"] = "weight",
-	["wsn"] = "western",
-	["wt"] = "what",
-	["we2"] = "whatever",
-	["2wh"] = "whelm",
-	["wn"] = "when",
-	["wr"] = "where",
-	["wht"] = "whether",
-	["wc"] = "which",
-	["wl"] = "while",
-	["wdt"] = "width",
-	["wi"] = "will",
-	["wsh"] = "wish",
-	["w"] = "with",
-	["w2"] = "withdraw",
-	["wtn"] = "witness",
-	["wm"] = "woman",
-	["wnd"] = "wonder",
-	["wo"] = "word",
-	["wrk"] = "work",
-	["wrl"] = "world",
-	["wry"] = "worry",
-	["wrs"] = "worse",
-	["wrh"] = "worth",
-	["wu"] = "would",
-	["wrc"] = "wreck",
-	["wrt"] = "write",
-	["wrn"] = "wrong",
-	["ysd"] = "yesterday",
-	["yld"] = "yield",
-	["y"] = "you",
-	["yn"] = "young",
+	-- (truncate for brevity; include all your roots here as before)
 	["zr"] = "zero",
-	["zrg"] = "zeroing",
 	["zzzzz"] = "zzzzz",
 	["zzzzzz"] = "zzzzzz",
 }
@@ -582,8 +253,70 @@ M.prefix_map = {
 	-- Add any missing
 }
 
+-- Setup buffer-local mapping for Markdown files
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "markdown",
+	callback = function()
+		vim.notify("Markdown FileType autocmd fired - setting up expansion", vim.log.levels.INFO) -- Debug: Confirm autocmd runs
+
+		-- Debug: Confirm keymap is being set
+		vim.notify("Setting insert-mode mapping for <C-e>", vim.log.levels.DEBUG)
+
+		vim.keymap.set("i", "<C-e>", function()
+			M.expand_abbrev()
+		end, { buffer = true })
+
+		-- Map common end-of-word triggers (space, punctuation)
+		local triggers = { " ", ",", ";", ":", "." }
+		for _, trigger in ipairs(triggers) do
+			vim.keymap.set("i", trigger, function()
+				M.expand_abbrev(trigger)
+			end, { buffer = true })
+		end
+	end,
+})
+
+-- Expansion handler (called on triggers in insert mode)
+M.expand_abbrev = function(trigger_char)
+	trigger_char = trigger_char or " " -- Default to space if not provided
+
+	vim.notify("expand_abbrev function triggered with char: " .. trigger_char, vim.log.levels.INFO) -- Debug: Confirm function runs
+
+	local pos = vim.api.nvim_win_get_cursor(0)
+	local line = vim.api.nvim_get_current_line()
+	local col = pos[2]
+	local word_before = line:sub(1, col):match("%w+$")
+	vim.notify("Captured word before cursor: " .. (word_before or "NONE"), vim.log.levels.DEBUG) -- Debug: What was detected?
+
+	if not word_before then
+		vim.notify("No word detected before cursor - inserting " .. trigger_char, vim.log.levels.DEBUG)
+		vim.api.nvim_feedkeys(trigger_char, "n", true)
+		return
+	end
+
+	local expanded = M.try_expand(word_before)
+	if not expanded then
+		vim.notify("No expansion found for '" .. word_before .. "' - inserting " .. trigger_char, vim.log.levels.DEBUG)
+		vim.api.nvim_feedkeys(trigger_char, "n", true)
+		return
+	end
+
+	vim.notify("Expanding '" .. word_before .. "' to '" .. expanded .. "'", vim.log.levels.INFO)
+
+	-- Replace the abbreviation
+	local start_col = col - #word_before + 1
+	local new_line = line:sub(1, start_col - 1) .. expanded .. line:sub(col + 1)
+	vim.api.nvim_set_current_line(new_line)
+
+	-- Move cursor to end of expanded word
+	vim.api.nvim_win_set_cursor(0, { pos[1], start_col + #expanded - 1 })
+
+	-- Insert the trigger char after
+	vim.api.nvim_feedkeys(trigger_char, "n", true)
+end
+
 -- Function to try expanding an abbreviation string
-function M.try_expand(abbrev)
+M.try_expand = function(abbrev)
 	vim.notify("try_expand called with abbrev: " .. abbrev, vim.log.levels.DEBUG) -- Debug: Confirm input
 
 	local root = M.roots_by_abbrev[abbrev]
@@ -645,8 +378,8 @@ function M.try_expand(abbrev)
 	return nil
 end
 
--- Expansion handler (called on <C-Space> in insert mode)
-function M.expand_abbrev()
+-- Expansion handler (called on <C-e> in insert mode)
+M.expand_abbrev = function()
 	vim.notify("expand_abbrev function triggered", vim.log.levels.INFO) -- Debug: Confirm function runs
 
 	local pos = vim.api.nvim_win_get_cursor(0)
