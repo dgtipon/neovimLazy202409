@@ -1,26 +1,10 @@
 -- Abbrev-gen: On-the-fly abbreviation expansion for Markdown
 
-vim.notify("Abbrev-gen version 1.5 loaded", vim.log.levels.INFO)
+vim.notify("Abbrev-gen version 1.6 loaded", vim.log.levels.INFO)
 
 local M = {} -- Declare M early, at the top
 
--- Root table: From your pop.txt (abbrev → word for reverse lookup; ~500 entries)
-M.roots_by_abbrev = {
-	["abn"] = "abandon",
-	["abl"] = "ability",
-	["abm"] = "abominate",
-	["ab"] = "about",
-	["abv"] = "above",
-	["abr"] = "abrupt",
-	["abo"] = "absolute",
-	["abb"] = "absorb",
-	["abs"] = "abstract",
-	["abd"] = "abundant",
-	["abu"] = "abuse",
-	["ace"] = "accelerate",
-	["acp"] = "accept",
-	["acs"] = "access",
-}
+M.roots_by_abbrev = require("tipon.core.abbrev-roots")
 
 -- Suffix map: code → suffix (inverse of original rules)
 M.suffix_map = {
