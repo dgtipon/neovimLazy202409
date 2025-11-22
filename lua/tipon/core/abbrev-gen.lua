@@ -1,42 +1,11 @@
 -- Abbrev-gen: On-the-fly abbreviation expansion for Markdown
 
-vim.notify("Abbrev-gen file required", vim.log.levels.INFO)
+vim.notify("Abbrev-gen version 1.4 loaded", vim.log.levels.INFO)
 
 local M = {} -- Declare M early, at the top
 
 -- Root table: From your pop.txt (abbrev → word for reverse lookup; ~500 entries)
 M.roots_by_abbrev = {
-	["5g"] = "/",
-	["5gf"] = "/fare",
-	["A2"] = "Almost",
-	["amr"] = "America",
-	["N"] = "And",
-	["A3"] = "Anything",
-	["R"] = "Are",
-	["T"] = "The",
-	["Ubts"] = "Usabilities",
-	["Ubty"] = "Usability",
-	["Ub"] = "Usable",
-	["Ubs"] = "Usables",
-	["Uby"] = "Usably",
-	["Ua"] = "Usage",
-	["Uas"] = "Usages",
-	["U"] = "Use",
-	["Ud"] = "Used",
-	["Uf"] = "Useful",
-	["Ufss"] = "Usefulness",
-	["Ufsss"] = "Usefulnesses",
-	["Uss"] = "Useless",
-	["Ur"] = "User",
-	["Urs"] = "Users",
-	["Us"] = "Uses",
-	["Ug"] = "Using",
-	["Ul"] = "Usual",
-	["Uy"] = "Usually",
-	["V"] = "Very",
-	["W"] = "With",
-	["wef3"] = "World_Economic_Forum",
-	["Y"] = "You",
 	["abn"] = "abandon",
 	["abl"] = "ability",
 	["abm"] = "abominate",
@@ -51,174 +20,6 @@ M.roots_by_abbrev = {
 	["ace"] = "accelerate",
 	["acp"] = "accept",
 	["acs"] = "access",
-	["acc"] = "accident",
-	["acka"] = "accommodate",
-	["ackp"] = "accompany",
-	["ackh"] = "accomplish",
-	["aco"] = "accord",
-	["acn"] = "account",
-	["acmu"] = "accumulate",
-	["acy"] = "accuracy",
-	["acr"] = "accurate",
-	["acu"] = "accuse",
-	["acm"] = "accustom",
-	["ach"] = "achieve",
-	["ack"] = "acknowledge",
-	["acq"] = "acquire",
-	["act"] = "act",
-	["aca"] = "activate",
-	["acv"] = "active",
-	["ays"] = "activities",
-	["ay"] = "activity",
-	["acl"] = "actual",
-	["adp"] = "adapt",
-	["add"] = "add",
-	["adc"] = "addict",
-	["adr"] = "address",
-	["adq"] = "adequate",
-	["adj"] = "adjust",
-	["adm"] = "administrate",
-	["adi"] = "admit",
-	["adl"] = "adolescence",
-	["adnz"] = "advance",
-	["adg"] = "advantage",
-	["ade"] = "adventure",
-	["adv"] = "adverse",
-	["adt"] = "advertise",
-	["ads"] = "advise",
-	["afb"] = "affable",
-	["afc"] = "affect",
-	["afi"] = "affiliate",
-	["afr"] = "affirm",
-	["afl"] = "afflict",
-	["afu"] = "affluent",
-	["afo"] = "afford",
-	["afd"] = "afraid",
-	["af"] = "after",
-	["ag"] = "against",
-	["agn"] = "agency",
-	["ags"] = "aggressive",
-	["agr"] = "agree",
-	["alr"] = "alarm",
-	["alg"] = "algorithm",
-	["alk"] = "alike",
-	["alv"] = "alleviate",
-	["ali"] = "alliance",
-	["alo"] = "allocate",
-	["alw"] = "allow",
-	["a2"] = "almost",
-	["alp"] = "alphabet",
-	["a2r"] = "already",
-	["al"] = "also",
-	["alt"] = "alter",
-	["alc"] = "altercate",
-	["aln"] = "alternate",
-	["a2t"] = "although",
-	["a2w"] = "always",
-	["amz"] = "amaze",
-	["amg"] = "among",
-	["amn"] = "amount",
-	["amp"] = "amplify",
-	["ang"] = "analog",
-	["anl"] = "analyze",
-	["anc"] = "ancestor",
-	["ani"] = "ancient",
-	["n"] = "and",
-	["anst"] = "anesthesia",
-	["anm"] = "animal",
-	["anh"] = "annihilate",
-	["ann"] = "announce",
-	["anu"] = "anonymous",
-	["ant"] = "another",
-	["ans"] = "answer",
-	["ana"] = "antagonize",
-	["anx"] = "anxiety",
-	["a3d"] = "any day",
-	["a3b"] = "anybody",
-	["a3o"] = "anyone",
-	["a3"] = "anything",
-	["a3t"] = "anytime",
-	["a3w"] = "anyway",
-	["a3wh"] = "anywhere",
-	["apy"] = "apocalypse",
-	["apo"] = "apology",
-	["apt"] = "apparatus",
-	["apr"] = "appear",
-	["aplc"] = "applicate",
-	["apl"] = "apply",
-	["apn"] = "appoint",
-	["aps"] = "appraise",
-	["azc"] = "appreciate",
-	["azh"] = "apprehend",
-	["azn"] = "apprentice",
-	["aqc"] = "approach",
-	["aqp"] = "appropriate",
-	["aqv"] = "approve",
-	["aqx"] = "approximate",
-	["arb"] = "arbitrary",
-	["arc"] = "architecture",
-	["r"] = "are",
-	["arg"] = "argue",
-	["arn"] = "around",
-	["arr"] = "arrange",
-	["ari"] = "article",
-	["arf"] = "artificial",
-	["ask"] = "ask",
-	["asp"] = "aspect",
-	["asn"] = "assassin",
-	["asr"] = "assert",
-	["ass"] = "assess",
-	["asg"] = "assign",
-	["asl"] = "assimilate",
-	["asi"] = "assist",
-	["asc"] = "associate",
-	["asm"] = "assume",
-	["ash"] = "astonish",
-	["asu"] = "astound",
-	["ast"] = "astronomy",
-	["asy"] = "asynchrony",
-	["atm"] = "atomic",
-	["ato"] = "atrocity",
-	["ata"] = "attach",
-	["atc"] = "attack",
-	["atp"] = "attempt",
-	["atn"] = "attend",
-	["atnn"] = "attention",
-	["att"] = "attitude",
-	["atr"] = "attract",
-	["ati"] = "attribute",
-	["agm"] = "augment",
-	["ath"] = "author",
-	["am2"] = "automate",
-	["avl"] = "avail",
-	["avd"] = "avoid",
-	["awk"] = "awake",
-	["awa"] = "award",
-	["awr"] = "aware",
-	["az"] = "awareness",
-	["aw"] = "away",
-	["aws"] = "awesome",
-	["bck"] = "back",
-	["bg2"] = "background",
-	["blc"] = "balance",
-	["brr"] = "barrier",
-	["bsc"] = "basic",
-	["bf2"] = "battlefield_",
-	["bg3"] = "battleground",
-	["bz"] = "bazaar",
-	["bra"] = "bear",
-	["btf"] = "beautify",
-	["bty"] = "beauty",
-	["bcm"] = "became",
-	["bcs"] = "because",
-	["bk"] = "become",
-	["bn"] = "been",
-	["bfr"] = "before",
-	["bgn"] = "begin",
-	-- (truncate for brevity; include all your roots here as before)
-	["zr"] = "zero",
-	["zzzzz"] = "zzzzz",
-	["zzzzzz"] = "zzzzzz",
 }
 
 -- Suffix map: code → suffix (inverse of original rules)
@@ -260,18 +61,14 @@ vim.api.nvim_create_autocmd("FileType", {
 		vim.notify("Markdown FileType autocmd fired - setting up expansion", vim.log.levels.INFO) -- Debug: Confirm autocmd runs
 
 		-- Debug: Confirm keymap is being set
-		vim.notify("Setting insert-mode mapping for <C-e>", vim.log.levels.DEBUG)
-
-		vim.keymap.set("i", "<C-e>", function()
-			M.expand_abbrev()
-		end, { buffer = true })
+		vim.notify("Setting insert-mode mapping for end-of-word triggers", vim.log.levels.DEBUG)
 
 		-- Map common end-of-word triggers (space, punctuation)
-		local triggers = { " ", ",", ";", ":", "." }
+		local triggers = { " ", ",", ";", ":", ".", "!", "?", "<" }
 		for _, trigger in ipairs(triggers) do
 			vim.keymap.set("i", trigger, function()
-				M.expand_abbrev(trigger)
-			end, { buffer = true })
+				return M.expand_abbrev(trigger)
+			end, { expr = true, buffer = true, silent = true })
 		end
 	end,
 })
@@ -280,7 +77,7 @@ vim.api.nvim_create_autocmd("FileType", {
 M.expand_abbrev = function(trigger_char)
 	trigger_char = trigger_char or " " -- Default to space if not provided
 
-	vim.notify("expand_abbrev function triggered with char: " .. trigger_char, vim.log.levels.INFO) -- Debug: Confirm function runs
+	vim.notify("expand_abbrev function 1 triggered with char: >" .. trigger_char .. "<", vim.log.levels.DEBUG) -- Debug: Confirm function runs
 
 	local pos = vim.api.nvim_win_get_cursor(0)
 	local line = vim.api.nvim_get_current_line()
@@ -289,30 +86,34 @@ M.expand_abbrev = function(trigger_char)
 	vim.notify("Captured word before cursor: " .. (word_before or "NONE"), vim.log.levels.DEBUG) -- Debug: What was detected?
 
 	if not word_before then
-		vim.notify("No word detected before cursor - inserting " .. trigger_char, vim.log.levels.DEBUG)
-		vim.api.nvim_feedkeys(trigger_char, "n", true)
-		return
+		vim.notify("No word detected before cursor - returning " .. trigger_char, vim.log.levels.DEBUG)
+		return trigger_char
 	end
 
 	local expanded = M.try_expand(word_before)
 	if not expanded then
-		vim.notify("No expansion found for '" .. word_before .. "' - inserting " .. trigger_char, vim.log.levels.DEBUG)
-		vim.api.nvim_feedkeys(trigger_char, "n", true)
-		return
+		vim.notify("No expansion found for '" .. word_before .. "' - returning " .. trigger_char, vim.log.levels.DEBUG)
+		return trigger_char
 	end
 
 	vim.notify("Expanding '" .. word_before .. "' to '" .. expanded .. "'", vim.log.levels.INFO)
 
-	-- Replace the abbreviation
-	local start_col = col - #word_before + 1
-	local new_line = line:sub(1, start_col - 1) .. expanded .. line:sub(col + 1)
-	vim.api.nvim_set_current_line(new_line)
+	vim.schedule(function()
+		-- Replace the abbreviation
+		local start_col = col - #word_before + 1
+		local new_line = line:sub(1, start_col - 1) .. expanded .. line:sub(col + 1)
+		vim.notify("new_line: " .. new_line .. "<", vim.log.levels.INFO)
+		vim.api.nvim_set_current_line(new_line)
 
-	-- Move cursor to end of expanded word
-	vim.api.nvim_win_set_cursor(0, { pos[1], start_col + #expanded - 1 })
+		-- Move cursor to end of expanded word
+		vim.api.nvim_win_set_cursor(0, { pos[1], start_col + #expanded - 1 })
 
-	-- Insert the trigger char after
-	vim.api.nvim_feedkeys(trigger_char, "n", true)
+		-- Insert the trigger char after
+		vim.api.nvim_feedkeys(trigger_char, "n", true)
+	end)
+
+	-- Return empty to not insert anything immediately (let schedule handle it)
+	return ""
 end
 
 -- Function to try expanding an abbreviation string
@@ -376,40 +177,6 @@ M.try_expand = function(abbrev)
 
 	vim.notify("No match found for abbrev: " .. abbrev, vim.log.levels.WARN) -- Warn if no expansion
 	return nil
-end
-
--- Expansion handler (called on <C-e> in insert mode)
-M.expand_abbrev = function()
-	vim.notify("expand_abbrev function triggered", vim.log.levels.INFO) -- Debug: Confirm function runs
-
-	local pos = vim.api.nvim_win_get_cursor(0)
-	local line = vim.api.nvim_get_current_line()
-	local col = pos[2]
-	local word_before = line:sub(1, col):match("%w+$")
-	vim.notify("Captured word before cursor: " .. (word_before or "NONE"), vim.log.levels.DEBUG) -- Debug: What was detected?
-
-	if not word_before then
-		vim.notify("No word detected before cursor - inserting plain space", vim.log.levels.DEBUG)
-		return [[<Space>]]
-	end
-
-	local expanded = M.try_expand(word_before)
-	if not expanded then
-		vim.notify("No expansion found for '" .. word_before .. "' - inserting plain space", vim.log.levels.DEBUG)
-		return [[<Space>]]
-	end
-
-	vim.notify("Expanding '" .. word_before .. "' to '" .. expanded .. "'", vim.log.levels.INFO)
-
-	-- Replace the abbreviation
-	local start_col = col - #word_before + 1
-	local new_line = line:sub(1, start_col - 1) .. expanded .. line:sub(col + 1)
-	vim.api.nvim_set_current_line(new_line)
-
-	-- Move cursor to end of expanded word + space position
-	vim.api.nvim_win_set_cursor(0, { pos[1], start_col + #expanded - 1 })
-
-	return [[<Space>]]
 end
 
 -- Optional: Regenerate pop.txt (unchanged from before)
