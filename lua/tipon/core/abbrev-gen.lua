@@ -1,6 +1,6 @@
 -- Abbrev-gen: On-the-fly abbreviation expansion for Markdown
 
-vim.notify("Abbrev-gen version 1.4 loaded", vim.log.levels.INFO)
+vim.notify("Abbrev-gen version 1.5 loaded", vim.log.levels.INFO)
 
 local M = {} -- Declare M early, at the top
 
@@ -120,21 +120,31 @@ end
 M.try_expand = function(abbrev)
 	vim.notify("try_expand called with abbrev: " .. abbrev, vim.log.levels.DEBUG) -- Debug: Confirm input
 
-	local root = M.roots_by_abbrev[abbrev]
+	local lower_abbrev = abbrev:lower()
+	local is_capitalized = (abbrev:sub(1, 1):upper() == abbrev:sub(1, 1))
+
+	local root = M.roots_by_abbrev[lower_abbrev]
 	if root then
 		vim.notify("Matched base root: " .. root, vim.log.levels.DEBUG)
-		return root
+		local expanded = root
+		if is_capitalized then
+			expanded = expanded:sub(1, 1):upper() .. expanded:sub(2)
+		end
+		return expanded
 	end
 
 	-- Check for suffix
 	for code, suffix in pairs(M.suffix_map) do
-		if abbrev:sub(-#code) == code then
-			local base_abbrev = abbrev:sub(1, -#code - 1)
+		if lower_abbrev:sub(-#code) == code then
+			local base_abbrev = lower_abbrev:sub(1, -#code - 1)
 			vim.notify("Testing suffix code '" .. code .. "' with base: " .. base_abbrev, vim.log.levels.DEBUG)
 			root = M.roots_by_abbrev[base_abbrev]
 			if root then
 				local expanded = root:gsub("e$", "") .. suffix
 				vim.notify("Suffix match found: " .. expanded, vim.log.levels.DEBUG)
+				if is_capitalized then
+					expanded = expanded:sub(1, 1):upper() .. expanded:sub(2)
+				end
 				return expanded
 			end
 		end
@@ -142,13 +152,16 @@ M.try_expand = function(abbrev)
 
 	-- Check for prefix
 	for code, prefix in pairs(M.prefix_map) do
-		if abbrev:sub(1, #code) == code then
-			local rest = abbrev:sub(#code + 1)
+		if lower_abbrev:sub(1, #code) == code then
+			local rest = lower_abbrev:sub(#code + 1)
 			vim.notify("Testing prefix code '" .. code .. "' with rest: " .. rest, vim.log.levels.DEBUG)
 			root = M.roots_by_abbrev[rest]
 			if root then
 				local expanded = prefix .. root
 				vim.notify("Prefix match found: " .. expanded, vim.log.levels.DEBUG)
+				if is_capitalized then
+					expanded = expanded:sub(1, 1):upper() .. expanded:sub(2)
+				end
 				return expanded
 			end
 			-- Prefix + suffix
@@ -168,6 +181,9 @@ M.try_expand = function(abbrev)
 					if root then
 						local expanded = prefix .. root:gsub("e$", "") .. suffix
 						vim.notify("Prefix+suffix match found: " .. expanded, vim.log.levels.DEBUG)
+						if is_capitalized then
+							expanded = expanded:sub(1, 1):upper() .. expanded:sub(2)
+						end
 						return expanded
 					end
 				end
