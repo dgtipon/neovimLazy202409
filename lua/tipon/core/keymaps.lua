@@ -38,7 +38,7 @@ keymap.set("n", "go", "<cmd>tabnew<CR>", { desc = "Open new tab" }) -- Open new 
 keymap.set("n", "<leader>n", "<cmd>cd .config/nvim<CR>", { desc = ".config/nvim" })
 keymap.set("n", "<leader>w", ":cd %:p:h<CR>", { desc = "Current file > pwd" })
 
-keymap.set("n", "<leader>tt", ":PlenaryBustedFile %<CR>", { desc = "Run tests for current file" })
+-- keymap.set("n", "<leader>tt", ":PlenaryBustedFile %<CR>", { desc = "Run tests for current file" })
 
 -- ColorSchemes
 

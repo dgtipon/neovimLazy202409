@@ -4,7 +4,7 @@ return {
 	dependencies = {
 		"hrsh7th/cmp-nvim-lsp",
 		{ "antosha417/nvim-lsp-file-operations", config = true },
-		{ "folke/lazydev.nvim", ft = "lua", opts = {} },
+		{ "folke/lazydev.nvim", ft = "lua", opts = { library = { "luvit-meta/library" } } }, -- Enable luvit-meta for libuv types
 		"williamboman/mason-lspconfig.nvim", -- Ensure this dependency is listed
 	},
 	config = function()
@@ -151,6 +151,21 @@ return {
 							Lua = {
 								completion = {
 									callSnippet = "Replace",
+								},
+								-- Add diagnostics to suppress undefined-field warnings
+								diagnostics = {
+									globals = { "vim" }, -- Explicitly tell LuaLS about vim global
+								},
+								-- Enable workspace recognition for Neovim runtime
+								workspace = {
+									library = {
+										vim.env.VIMRUNTIME, -- Neovim runtime files
+										"${3rd}/luv/library", -- libuv (for vim.loop)
+									},
+									checkThirdParty = false, -- Avoid false positives on third-party libs
+									ignoreDir = { ".git", "lazy" }, -- Ignore noisy dirs
+									maxPreload = 2000, -- Increase preload for larger configs
+									preloadFileSize = 1000,
 								},
 							},
 						},

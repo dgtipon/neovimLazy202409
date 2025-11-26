@@ -162,7 +162,7 @@ local function load_pop_overrides()
 		local abbrev, word = entry:match("^(%S+)_(%S+)$")
 		if abbrev and word then
 			M.abbrevs[abbrev:lower()] = word -- Store lower for case-insensitivity
-			vim.notify("Overrode " .. abbrev .. " → " .. word .. " from pop.txt", vim.log.levels.DEBUG)
+			--			vim.notify("Overrode " .. abbrev .. " → " .. word .. " from pop.txt", vim.log.levels.DEBUG)
 		end
 	end
 end

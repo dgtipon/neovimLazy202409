@@ -1,6 +1,8 @@
 -- netrw set to tree style
 vim.cmd("let g:netrw_liststyle = 3")
 
+vim.g.lazy_check_on_start = false
+
 local opt = vim.opt -- for conciseness
 
 -- line numbers

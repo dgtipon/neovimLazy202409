@@ -1,4 +1,4 @@
 require("tipon.core")
 require("tipon.lazy")
 
-vim.cmd.colorscheme("gruvbox")
+-- vim.cmd.colorscheme("gruvbox")
