@@ -60,6 +60,8 @@ local function try_expand(abbrev)
 	return expanded
 end
 
+M.try_expand = try_expand -- Export for use in completion source
+
 -- Setup buffer-local mapping for Markdown files
 local function setup_markdown_keymaps()
 	vim.notify("Keymaps set for Markdown buffer", vim.log.levels.INFO)
