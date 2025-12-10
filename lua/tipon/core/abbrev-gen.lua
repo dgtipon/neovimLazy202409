@@ -9,6 +9,7 @@ local json_path = vim.fn.stdpath("config") .. "/abolish_data.json" -- Adjust pat
 
 -- Single shared table for lookups (used by try_expand and future completion)
 M.abbrevs = {}
+M.roots = {}
 
 -- Load and parse JSON once on plugin init (expanded abbrev -> word)
 local function load_json_data()
@@ -34,6 +35,11 @@ local function load_json_data()
 			local s_word = suffix_words[i] or "" -- Fallback
 			local full_word = root_word .. s_word
 			M.abbrevs[full_abbrev] = full_word
+		end
+		-- Add root to separate table if it has a base form (empty suffix)
+		if vim.tbl_contains(suffix_abbrevs, "") then
+			M.roots = M.roots or {} -- Init if needed
+			M.roots[root_abbrev] = root_word
 		end
 	end
 	vim.notify("Loaded " .. vim.tbl_count(M.abbrevs) .. " abbrev-word pairs from JSON", vim.log.levels.INFO)

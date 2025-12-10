@@ -77,6 +77,6 @@ return {
 		})
 
 		-- Register the custom source (update path to core)
-		require("cmp").register_source("abbrev_pop", require("tipon.core.abbrev_cmp_source").new())
+		cmp.register_source("abbrev_pop", require("tipon.core.abbrev_cmp_source").new())
 	end,
 }
