@@ -40,7 +40,10 @@ local function load_json_data()
 		-- Add root to separate table if it has a base form (empty suffix)
 		if vim.tbl_contains(suffix_abbrevs, "") then
 			M.roots = M.roots or {} -- Init if needed
-			M.roots[root_abbrev] = root_word
+			local empty_index = vim.fn.index(suffix_abbrevs, "") + 1 -- 1-based index
+			local s_word = (empty_index > 0 and suffix_words[empty_index]) or "" -- Get corresponding suffix_word
+			local base_word = root_word .. s_word -- Full base word
+			M.roots[root_abbrev] = base_word
 		end
 	end
 	vim.notify("Loaded " .. vim.tbl_count(M.abbrevs) .. " abbrev-word pairs from JSON", vim.log.levels.INFO)
