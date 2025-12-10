@@ -41,6 +41,7 @@ end
 source.is_available = function()
 	return vim.bo.filetype == "markdown"
 end
+
 -- Core completion logic: Called by cmp on trigger
 source.complete = function(self, params, callback)
 	local abbrev_gen = require("tipon.core.abbrev-gen") -- Reference your module
@@ -82,13 +83,50 @@ source.complete = function(self, params, callback)
 		end
 	end
 
+	-- Add suffix variants if input is an exact root abbrev
+	if abbrev_gen.roots[lower_input] then -- Confirm it's a root
+		for _, entry in ipairs(abbrev_gen.json_data or {}) do
+			if entry.root_abbrev:lower() == lower_input then
+				local root_word = entry.root_word
+				local suffix_abbrevs = entry.suffix_abbrevs or {}
+				local suffix_words = entry.suffix_words or {}
+				for i, s_abbrev in ipairs(suffix_abbrevs) do
+					if s_abbrev ~= "" then -- Skip base (already added as exact)
+						local full_abbrev = lower_input .. s_abbrev:lower()
+						local s_word = suffix_words[i] or ""
+						local full_word = root_word .. s_word
+						local adjusted_word = is_capitalized and (full_word:sub(1, 1):upper() .. full_word:sub(2))
+							or full_word
+						-- Check for dupes (e.g., if partial already added it)
+						if
+							not vim.tbl_contains(
+								vim.tbl_map(function(item)
+									return item.insertText
+								end, items),
+								adjusted_word
+							)
+						then
+							table.insert(items, {
+								label = full_abbrev .. "_" .. adjusted_word, -- Show full_abbrev_full_word
+								kind = vim.lsp.protocol.CompletionItemKind.Text,
+								insertText = adjusted_word, -- Insert only the word
+								documentation = "Suffix expansion: " .. s_abbrev,
+							})
+						end
+					end
+				end
+				break -- Assume unique roots
+			end
+		end
+	end
+
 	-- Optional: Fallback to dynamic try_expand if no matches (integrates your existing logic)
 	local dynamic_word = abbrev_gen.try_expand(input)
 	if
 		dynamic_word
 		and not vim.tbl_contains(
 			vim.tbl_map(function(item)
-				return item.insertText -- Check plain word (insertText) instead of formatted label
+				return item.insertText
 			end, items),
 			dynamic_word
 		)

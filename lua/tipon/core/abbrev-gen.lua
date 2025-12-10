@@ -21,6 +21,7 @@ local function load_json_data()
 	end
 	local json_str = table.concat(lines, "\n")
 	local data = vim.fn.json_decode(json_str)
+	M.json_data = data -- Export raw JSON for suffix lookups in completion
 
 	-- Clear existing for reloads
 	M.abbrevs = {}
