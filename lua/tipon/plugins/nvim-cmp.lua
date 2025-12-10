@@ -61,21 +61,23 @@ return {
 			},
 		})
 
-		-- Markdown-specific sources (includes globals + custom)
+		-- Markdown-specific sources (includes globals with tweaks + custom)
 		cmp.setup.filetype("markdown", {
 			sources = cmp.config.sources({
 				{ name = "nvim_lsp" },
-				{ name = "luasnip" },
+				{
+					name = "luasnip", -- Snippets with higher threshold to reduce noise
+					keyword_length = 3, -- Only trigger after 3+ chars
+				},
 				{ name = "buffer" },
 				{ name = "path" },
 				{
 					name = "abbrev_pop",
-					priority = 1000, -- Ensures it shows up prominently
-					keyword_length = 2, -- Trigger after 2 chars
+					priority = 1000, -- Highest priority for your custom source
+					keyword_length = 2, -- Trigger after 2 chars as before
 				},
 			}),
 		})
-
 		-- Register the custom source (update path to core)
 		cmp.register_source("abbrev_pop", require("tipon.core.abbrev_cmp_source").new())
 	end,
