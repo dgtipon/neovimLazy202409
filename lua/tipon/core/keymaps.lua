@@ -83,3 +83,14 @@ keymap.set("n", "<leader>ce", "<cmd>colorscheme everforest<CR>", { desc = "Everf
 
 -- dracula
 keymap.set("n", "<leader>cD", "<cmd>colorscheme dracula<CR>", { desc = "Dracula" })
+
+local abbrev_gen = require("tipon.core.abbrev-gen")
+keymap.set("n", "<leader>a", function()
+	local word = vim.fn.expand("<cword>"):lower()
+	local abbrev = abbrev_gen.try_reverse(word)
+	if abbrev then
+		vim.notify("Abbrev: " .. abbrev:upper(), vim.log.levels.INFO) -- Or use popup win
+	else
+		vim.notify("No abbrev found", vim.log.levels.WARN)
+	end
+end, { desc = "Show abbrev for word" })

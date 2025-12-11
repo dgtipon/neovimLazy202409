@@ -23,6 +23,22 @@ local function load_json_data()
 	local data = vim.fn.json_decode(json_str)
 	M.json_data = data -- Export raw JSON for suffix lookups in completion
 
+	-- Reverse expansion: Simple lookup on M.roots (base words only, no prefixes/suffixes)
+	M.try_reverse = function(word)
+		if #word < 2 then
+			return nil
+		end
+		word = word:lower() -- Normalize for case-insensitive match
+
+		for root_abbrev, base_word in pairs(M.roots) do
+			if base_word:lower() == word then
+				return root_abbrev:upper() -- Upper for display; adjust as needed
+			end
+		end
+
+		return nil -- No match
+	end
+
 	-- Clear existing for reloads
 	M.abbrevs = {}
 
