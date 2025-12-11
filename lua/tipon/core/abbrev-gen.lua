@@ -52,22 +52,104 @@ end
 -- Call on load
 load_json_data()
 
+M.prefixes = {
+	["at"] = "anti",
+	["ao"] = "auto",
+	["bi"] = "bi",
+	["co"] = "co",
+	["de"] = "de",
+	["ds"] = "dis",
+	["en"] = "en",
+	["ex"] = "ex",
+	["il"] = "il",
+	["im"] = "im",
+	["in"] = "in",
+	["ir"] = "ir",
+	["it"] = "inter",
+	["mo"] = "mono",
+	["ms"] = "mis",
+	["mu"] = "multi",
+	["nn"] = "non",
+	["ov"] = "over",
+	["pt"] = "post",
+	["re"] = "re",
+	["sb"] = "sub",
+	["sm"] = "semi",
+	["sp"] = "super",
+	["ti"] = "tri",
+	["ts"] = "trans",
+	["ud"] = "under",
+	["un"] = "un",
+}
+
 -- Optional: User command to reload if JSON changes
 vim.api.nvim_create_user_command("ReloadAbbrevJson", load_json_data, { desc = "Reload abbrev data from JSON" })
 
 -- Expansion logic: Lookup in table, handle capitalization
 -- No dictionary checks or dynamic generation
 local function try_expand(abbrev)
-	local is_capitalized = abbrev:sub(1, 1):match("%u") ~= nil
-	local lower_abbrev = abbrev:lower()
-	local expanded = M.abbrevs[lower_abbrev]
-	if not expanded then
+	if #abbrev < 2 then
+		return nil
+	end -- Min length to avoid noise
+
+	local pos = 1
+	local prefixes = {}
+	local capitalize = false
+
+	-- Special handling for first prefix (allow first char uppercase for capitalization)
+	if #abbrev >= 2 then
+		local first_char = abbrev:sub(1, 1)
+		local second_char = abbrev:sub(2, 2)
+		if first_char:match("[a-zA-Z]") and second_char:match("[A-Z]") then
+			local cand = first_char:lower() .. second_char:lower()
+			if M.prefixes[cand] then
+				table.insert(prefixes, cand)
+				pos = 3
+				if first_char:match("[A-Z]") then
+					capitalize = true
+				end
+			end
+		end
+	end
+
+	-- Remaining prefixes: strict lowercase + uppercase
+	while pos + 1 <= #abbrev do
+		local first_char = abbrev:sub(pos, pos)
+		local second_char = abbrev:sub(pos + 1, pos + 1)
+		if first_char:match("[a-z]") and second_char:match("[A-Z]") then
+			local cand = first_char .. second_char:lower()
+			if M.prefixes[cand] then
+				table.insert(prefixes, cand)
+				pos = pos + 2
+			else
+				break
+			end
+		else
+			break
+		end
+	end
+
+	local root_abbrev = abbrev:sub(pos):lower()
+	if #root_abbrev == 0 then
 		return nil
 	end
-	if is_capitalized then
-		expanded = expanded:sub(1, 1):upper() .. expanded:sub(2)
+
+	local expanded_root = M.abbrevs[root_abbrev]
+	if not expanded_root then
+		return nil
 	end
-	return expanded
+
+	local prefix_str = ""
+	for _, p in ipairs(prefixes) do
+		prefix_str = prefix_str .. M.prefixes[p]
+	end
+
+	local full_expanded = prefix_str .. expanded_root
+	if capitalize then
+		full_expanded = full_expanded:sub(1, 1):upper() .. full_expanded:sub(2)
+	end
+
+	return full_expanded
 end
 
 M.try_expand = try_expand -- Export for use in completion source
