@@ -1,6 +1,6 @@
 -- Abbrev-gen: Abbreviation expansion for Markdown using explicit JSON mappings
 
-vim.notify("Abbrev-gen version 2.0 loaded (JSON-based expansions)", vim.log.levels.INFO)
+-- vim.notify("Abbrev-gen version 2.0 loaded (JSON-based expansions)", vim.log.levels.INFO)
 
 local M = {} -- Module table
 
@@ -62,7 +62,24 @@ local function load_json_data()
 			M.roots[root_abbrev] = base_word
 		end
 	end
-	vim.notify("Loaded " .. vim.tbl_count(M.abbrevs) .. " abbrev-word pairs from JSON", vim.log.levels.INFO)
+	--	vim.notify("Loaded " .. vim.tbl_count(M.abbrevs) .. " abbrev-word pairs from JSON", vim.log.levels.INFO)
+
+	-- New: Collect two-letter root abbrevs with their base words
+	M.two_letter_roots = {}
+	for _, entry in ipairs(data) do
+		local root_abbrev = entry.root_abbrev:lower()
+		if #root_abbrev == 2 then
+			local base_word = entry.root_word
+			local suffix_abbrevs = entry.suffix_abbrevs or {}
+			local suffix_words = entry.suffix_words or {}
+			local empty_index = vim.fn.index(suffix_abbrevs, "") + 1 -- 1-based; 0 if not found
+			if empty_index > 0 then
+				base_word = base_word .. (suffix_words[empty_index] or "")
+			end
+			M.two_letter_roots[root_abbrev] = base_word
+		end
+	end
+	-- vim.notify("Loaded " .. vim.tbl_count(M.two_letter_roots) .. " two-letter root abbrevs from JSON", vim.log.levels.INFO)
 end
 
 -- Call on load
@@ -97,6 +114,54 @@ M.prefixes = {
 	["ud"] = "under",
 	["un"] = "un",
 }
+
+-- Function to list all two-letter root abbreviations in a popup
+M.list_two_letter_abbrevs = function()
+	local lines = {}
+	for abbrev, word in pairs(M.two_letter_roots) do
+		table.insert(lines, abbrev:upper() .. " → " .. word) -- Format as "AB → about"
+	end
+	table.sort(lines) -- Alphabetical sort for readability
+
+	if #lines == 0 then
+		vim.notify("No two-letter root abbreviations found", vim.log.levels.WARN)
+		return
+	end
+
+	-- Create a buffer for the popup
+	local buf = vim.api.nvim_create_buf(false, true)
+	vim.api.nvim_buf_set_lines(buf, 0, -1, true, lines)
+	vim.api.nvim_buf_set_option(buf, "buftype", "nofile")
+	vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe")
+	vim.api.nvim_buf_set_option(buf, "modifiable", false)
+
+	-- Calculate dimensions (e.g., 30% of window width/height)
+	local width = math.floor(vim.o.columns * 0.3)
+	local height = math.min(#lines + 2, math.floor(vim.o.lines * 0.3))
+	local opts = {
+		relative = "editor",
+		width = width,
+		height = height,
+		col = (vim.o.columns - width) / 2,
+		row = (vim.o.lines - height) / 2,
+		style = "minimal",
+		border = "rounded",
+		title = "Two-Letter Root Abbreviations",
+		title_pos = "center",
+	}
+
+	-- Open the floating window
+	local win = vim.api.nvim_open_win(buf, true, opts)
+	vim.api.nvim_win_set_option(win, "winhl", "NormalFloat:Normal,FloatBorder:Normal")
+
+	-- Keymap to close the popup (Esc or q)
+	vim.keymap.set("n", "<Esc>", function()
+		vim.api.nvim_win_close(win, true)
+	end, { buffer = buf, silent = true })
+	vim.keymap.set("n", "q", function()
+		vim.api.nvim_win_close(win, true)
+	end, { buffer = buf, silent = true })
+end
 
 -- Optional: User command to reload if JSON changes
 vim.api.nvim_create_user_command("ReloadAbbrevJson", load_json_data, { desc = "Reload abbrev data from JSON" })
@@ -172,7 +237,7 @@ M.try_expand = try_expand -- Export for use in completion source
 
 -- Setup buffer-local mapping for Markdown files
 local function setup_markdown_keymaps()
-	vim.notify("Keymaps set for Markdown buffer", vim.log.levels.INFO)
+	--	vim.notify("Keymaps set for Markdown buffer", vim.log.levels.INFO)
 	local triggers = { " ", ",", ";", ":", ".", "!", "?", "<" }
 	for _, trigger in ipairs(triggers) do
 		vim.keymap.set("i", trigger, function()
