@@ -99,6 +99,14 @@ keymap.set("n", "<leader>a", function()
 	end
 end, { desc = "Show abbrev for word" })
 
+keymap.set("n", "<leader>1", function()
+	if vim.bo.filetype == "markdown" then
+		require("tipon.core.abbrev-gen").list_one_letter_abbrevs()
+	else
+		vim.notify("One-letter abbrev list available only in Markdown buffers", vim.log.levels.WARN)
+	end
+end, { desc = "Show all One-letter root abbrevs" })
+
 keymap.set("n", "<leader>2", function()
 	if vim.bo.filetype == "markdown" then
 		require("tipon.core.abbrev-gen").list_two_letter_abbrevs()
