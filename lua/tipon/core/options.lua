@@ -58,3 +58,16 @@ vim.api.nvim_create_autocmd("FileType", {
 		vim.opt_local.background = "light"
 	end,
 })
+
+-- Autocmd for filetype-specific colorscheme (added for Markdown bamboo)
+vim.api.nvim_create_autocmd("BufEnter", {
+	pattern = "*", -- Applies to all buffers
+	callback = function()
+		if vim.bo.filetype == "markdown" then
+			vim.cmd.colorscheme("bamboo")
+		else
+			vim.cmd.colorscheme("gruvbox") -- Change to your preferred default, e.g., "tokyonight-day"
+		end
+	end,
+	desc = "Set colorscheme based on filetype (bamboo for markdown)",
+})
