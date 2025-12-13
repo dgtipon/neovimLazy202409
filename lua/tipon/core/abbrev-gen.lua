@@ -275,6 +275,11 @@ local function try_expand(abbrev)
 		end
 	end
 
+	-- NEW: Handle capitalization for roots with no prefixes
+	if #prefixes == 0 and abbrev:sub(1, 1):match("[A-Z]") then
+		capitalize = true
+	end
+
 	local root_abbrev = abbrev:sub(pos):lower()
 	if #root_abbrev == 0 then
 		return nil

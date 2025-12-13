@@ -90,6 +90,11 @@ source.complete = function(self, params, callback)
 		end
 	end
 
+	-- NEW: Handle capitalization for roots with no prefixes
+	if #prefixes == 0 and input:sub(1, 1):match("[A-Z]") then
+		capitalize = true
+	end
+
 	local root_input = input:sub(pos):lower()
 	-- If no root after prefixes and input is short, skip
 	if #root_input < 1 then
@@ -154,5 +159,4 @@ source.complete = function(self, params, callback)
 
 	callback(items)
 end
-
 return source
