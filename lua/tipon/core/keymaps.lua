@@ -114,3 +114,11 @@ keymap.set("n", "<leader>2", function()
 		vim.notify("Two-letter abbrev list available only in Markdown buffers", vim.log.levels.WARN)
 	end
 end, { desc = "Show all two-letter root abbrevs" })
+
+keymap.set("n", "<leader>p", function()
+	if vim.bo.filetype == "markdown" then
+		require("tipon.core.abbrev-gen").list_prefixes()
+	else
+		vim.notify("Prefix abbrev list available only in Markdown buffers", vim.log.levels.WARN)
+	end
+end, { desc = "Show all prefix abbrevs" })

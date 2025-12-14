@@ -351,6 +351,53 @@ M.expand_abbrev = function(trigger_char)
 		vim.api.nvim_feedkeys(trigger_char, "n", true)
 	end)
 
+	-- Function to list all prefix abbrevs in a popup
+	local function list_prefixes()
+		if vim.tbl_isempty(M.prefixes) then
+			vim.notify("No prefixes loaded", vim.log.levels.WARN)
+			return
+		end
+
+		local lines = {}
+		for abbrev, word in pairs(M.prefixes) do
+			local display_abbrev = abbrev:sub(1, 1):lower() .. abbrev:sub(2, 2):upper() -- e.g., "rE" for "re"
+			table.insert(lines, display_abbrev .. " -> " .. word)
+		end
+		table.sort(lines) -- Sort alphabetically for easier reading
+
+		local buf = vim.api.nvim_create_buf(false, true) -- Scratch buffer
+		vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+		vim.api.nvim_buf_set_option(buf, "modifiable", false)
+		vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe") -- Auto-delete on close
+
+		local width = math.min(50, vim.o.columns - 10) -- Dynamic width, max 50 cols
+		local height = math.min(#lines + 2, vim.o.lines - 10) -- Dynamic height with padding
+		local opts = {
+			style = "minimal",
+			relative = "editor",
+			width = width,
+			height = height,
+			row = math.floor((vim.o.lines - height) / 2),
+			col = math.floor((vim.o.columns - width) / 2),
+			border = "single", -- Clean border
+			title = "Prefix Abbreviations",
+			title_pos = "center",
+		}
+
+		local win = vim.api.nvim_open_win(buf, true, opts)
+		vim.api.nvim_win_set_option(win, "winhl", "Normal:NormalFloat,FloatBorder:FloatBorder") -- Subtle highlighting
+
+		-- Keymaps to close (consistent with your other lists)
+		vim.keymap.set("n", "<Esc>", function()
+			vim.api.nvim_win_close(win, true)
+		end, { buffer = buf, silent = true })
+		vim.keymap.set("n", "q", function()
+			vim.api.nvim_win_close(win, true)
+		end, { buffer = buf, silent = true })
+	end
+
+	M.list_prefixes = list_prefixes -- Export for keymap access
+
 	return ""
 end
 
