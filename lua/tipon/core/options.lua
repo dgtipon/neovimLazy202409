@@ -71,3 +71,14 @@ vim.api.nvim_create_autocmd("BufEnter", {
 	end,
 	desc = "Set colorscheme based on filetype (bamboo for markdown)",
 })
+
+-- Auto-save on InsertLeave for Markdown buffers (only if modified)
+vim.api.nvim_create_autocmd("InsertLeave", {
+	group = vim.api.nvim_create_augroup("MarkdownAutoSave", { clear = true }),
+	callback = function()
+		if vim.bo.filetype == "markdown" and vim.fn.bufname() ~= "" then -- Ensure it's Markdown and the buffer has a name
+			vim.cmd("silent update")
+		end
+	end,
+	desc = "Auto-save Markdown files on leaving insert mode",
+})
