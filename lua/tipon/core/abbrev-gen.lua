@@ -247,12 +247,17 @@ M.expand_abbrev = function(trigger_char)
 		return trigger_char
 	end
 
+	-- Determine if we should feed (insert) the trigger_char after expansion
+	local feed_trigger = trigger_char ~= "<"
+
 	vim.schedule(function()
 		local start_col = col - #word_before + 1
 		local new_line = line:sub(1, start_col - 1) .. expanded .. line:sub(col + 1)
 		vim.api.nvim_set_current_line(new_line)
 		vim.api.nvim_win_set_cursor(0, { pos[1], start_col + #expanded - 1 })
-		vim.api.nvim_feedkeys(trigger_char, "n", true)
+		if feed_trigger then
+			vim.api.nvim_feedkeys(trigger_char, "n", true)
+		end
 	end)
 
 	return ""
