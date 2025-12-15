@@ -47,6 +47,9 @@ opt.swapfile = false
 -- add english dictionary and suggestion files to rtp
 opt.runtimepath:append("/usr/share/vim/vimfiles")
 
+-- persistent undo across sessions
+opt.undofile = true
+
 -- Enable spell checking for Markdown files
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "markdown",
