@@ -102,8 +102,6 @@ source.complete = function(self, params, callback)
 	end
 
 	local items = {}
-	local use_roots_only = #root_input <= 3 -- Limit to roots for short inputs
-	local lookup_table = use_roots_only and abbrev_gen.roots or abbrev_gen.abbrevs
 
 	-- Build prefix word string
 	local prefix_str = ""
@@ -111,52 +109,88 @@ source.complete = function(self, params, callback)
 		prefix_str = prefix_str .. abbrev_gen.prefixes[p]
 	end
 
-	-- Exact match (always check full abbrevs for precision)
-	local exact_word = abbrev_gen.abbrevs[root_input]
-	if exact_word then
-		local full_word = prefix_str .. exact_word
-		local adjusted_word = capitalize and (full_word:sub(1, 1):upper() .. full_word:sub(2)) or full_word
-		table.insert(items, {
-			label = (prefix_abbrev_str .. root_input) .. "_" .. adjusted_word, -- Show abbrev_word for cue
-			kind = vim.lsp.protocol.CompletionItemKind.Text,
-			insertText = adjusted_word, -- Insert only the word
-			documentation = "Exact abbrev expansion from JSON",
-		})
+	-- Find the longest prefix of root_input that is a root
+	local root = nil
+	local partial_suffix = ""
+	for i = #root_input, 1, -1 do
+		local candidate = root_input:sub(1, i)
+		if abbrev_gen.roots[candidate] then
+			root = candidate
+			partial_suffix = root_input:sub(i + 1)
+			break
+		end
 	end
 
-	-- Prefix/fuzzy matches (using roots or full based on input length)
+	-- If a root prefix is found, add matching suffixed forms incrementally (exact + next letter extensions)
+	if root then
+		-- Find the matching entry in json_data
+		local entry = nil
+		for _, e in ipairs(abbrev_gen.json_data) do
+			if e.root_abbrev:lower() == root then
+				entry = e
+				break
+			end
+		end
+		if entry then
+			local suffix_abbrevs = entry.suffix_abbrevs or {}
+			local suffix_words = entry.suffix_words or {}
+			local matched_suffixes = {}
+			for i, s_abbrev in ipairs(suffix_abbrevs) do
+				if s_abbrev:find(partial_suffix, 1, true) == 1 and #s_abbrev <= #partial_suffix + 1 then
+					local full_abbrev = root .. s_abbrev
+					local s_word = suffix_words[i] or ""
+					local full_word = prefix_str .. entry.root_word .. s_word
+					local adjusted_word = capitalize and (full_word:sub(1, 1):upper() .. full_word:sub(2)) or full_word
+					table.insert(matched_suffixes, {
+						label = (prefix_abbrev_str .. full_abbrev) .. "_" .. adjusted_word,
+						kind = vim.lsp.protocol.CompletionItemKind.Text,
+						insertText = adjusted_word,
+						documentation = (
+							s_abbrev == "" and "Base root expansion"
+							or "Suffix: " .. s_abbrev:upper() .. " → " .. s_word
+						),
+					})
+				end
+			end
+			-- Sort by label for consistent order
+			table.sort(matched_suffixes, function(a, b)
+				return a.label < b.label
+			end)
+			for _, item in ipairs(matched_suffixes) do
+				table.insert(items, item)
+			end
+		end
+	end
+
+	-- Add partial/fuzzy matches on other roots (if not fully matched by suffixes)
+	local lookup_table = abbrev_gen.roots -- Always use roots for partial matches
 	for abbrev, word in pairs(lookup_table) do
 		if abbrev:find(root_input, 1, true) == 1 and abbrev ~= root_input then
 			local full_word = prefix_str .. word
 			local adjusted_word = capitalize and (full_word:sub(1, 1):upper() .. full_word:sub(2)) or full_word
 			table.insert(items, {
-				label = (prefix_abbrev_str .. abbrev) .. "_" .. adjusted_word, -- Show abbrev_word for cue
+				label = (prefix_abbrev_str .. abbrev) .. "_" .. adjusted_word,
 				kind = vim.lsp.protocol.CompletionItemKind.Text,
-				insertText = adjusted_word, -- Insert only the word
-				documentation = "Partial match: " .. abbrev,
+				insertText = adjusted_word,
+				documentation = "Partial root match: " .. abbrev,
 			})
 		end
 	end
 
 	-- Optional: Fallback to dynamic try_expand if no matches (integrates your existing logic)
-	local dynamic_word = abbrev_gen.try_expand(input) -- Pass full input; try_expand handles prefixes
-	if
-		dynamic_word
-		and not vim.tbl_contains(
-			vim.tbl_map(function(item)
-				return item.insertText
-			end, items),
-			dynamic_word
-		)
-	then
-		table.insert(items, {
-			label = input:lower() .. "_" .. dynamic_word, -- Consistent format
-			kind = vim.lsp.protocol.CompletionItemKind.Text,
-			insertText = dynamic_word, -- Insert only the word
-			documentation = "Dynamic expansion",
-		})
+	if #items == 0 then
+		local dynamic_word = abbrev_gen.try_expand(input) -- Pass full input; try_expand handles prefixes
+		if dynamic_word then
+			table.insert(items, {
+				label = input:lower() .. "_" .. dynamic_word, -- Consistent format
+				kind = vim.lsp.protocol.CompletionItemKind.Text,
+				insertText = dynamic_word, -- Insert only the word
+				documentation = "Dynamic expansion",
+			})
+		end
 	end
 
 	callback(items)
 end
+
 return source
