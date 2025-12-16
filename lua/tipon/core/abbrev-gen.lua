@@ -4,16 +4,13 @@
 
 local M = {} -- Module table
 
--- Path to your JSON file (adjust if placed elsewhere)
-local json_path = vim.fn.stdpath("config") .. "/abolish_data.json" -- Adjust path
-
 -- Single shared table for lookups (used by try_expand and future completion)
 M.abbrevs = {}
 M.roots = {}
 
 -- Load and parse JSON once on plugin init (expanded abbrev -> word)
 local function load_json_data()
-	local json_path = vim.fn.stdpath("config") .. "/abolish_data.json" -- Adjust if needed
+	local json_path = vim.fn.stdpath("config") .. "/abolish_obj_data.json" -- Adjust if needed
 	local lines = vim.fn.readfile(json_path)
 	if #lines == 0 then
 		vim.notify("abolish_data.json not found or empty", vim.log.levels.ERROR)
@@ -42,7 +39,9 @@ local function load_json_data()
 	-- Clear existing for reloads
 	M.abbrevs = {}
 
-	for _, entry in ipairs(data) do
+	-- Process roots (use data.roots or fallback to empty array)
+	M.roots = {}
+	for _, entry in ipairs(data.roots or {}) do
 		local root_abbrev = entry.root_abbrev:lower() -- Ensure consistency
 		local root_word = entry.root_word
 		local suffix_abbrevs = entry.suffix_abbrevs or {}
@@ -62,11 +61,11 @@ local function load_json_data()
 			M.roots[root_abbrev] = base_word
 		end
 	end
-	--	vim.notify("Loaded " .. vim.tbl_count(M.abbrevs) .. " abbrev-word pairs from JSON", vim.log.levels.INFO)
+	-- vim.notify("Loaded " .. vim.tbl_count(M.abbrevs) .. " abbrev-word pairs from JSON", vim.log.levels.INFO)
 
 	-- Collect one-letter root abbrevs with their base words
 	M.one_letter_roots = {}
-	for _, entry in ipairs(data) do
+	for _, entry in ipairs(data.roots or {}) do
 		local root_abbrev = entry.root_abbrev:lower()
 		if #root_abbrev == 1 then
 			local base_word = entry.root_word
@@ -79,11 +78,14 @@ local function load_json_data()
 			M.one_letter_roots[root_abbrev] = base_word
 		end
 	end
-	-- vim.notify("Loaded " .. vim.tbl_count(M.one) .. " one-letter root abbrevs from JSON", vim.log.levels.INFO)
+	-- vim.notify(
+	-- 	"Loaded " .. vim.tbl_count(M.one_letter_roots) .. " one-letter root abbrevs from JSON",
+	-- 	vim.log.levels.INFO
+	-- )
 
 	-- Collect two-letter root abbrevs with their base words
 	M.two_letter_roots = {}
-	for _, entry in ipairs(data) do
+	for _, entry in ipairs(data.roots or {}) do
 		local root_abbrev = entry.root_abbrev:lower()
 		if #root_abbrev == 2 then
 			local base_word = entry.root_word
@@ -96,41 +98,19 @@ local function load_json_data()
 			M.two_letter_roots[root_abbrev] = base_word
 		end
 	end
-	-- vim.notify("Loaded " .. vim.tbl_count(M.two_letter_roots) .. " two-letter root abbrevs from JSON", vim.log.levels.INFO)
+
+	-- New: Load prefixes (simple loop, no complications)
+	M.prefixes = {}
+	for _, prefix_entry in ipairs(data.prefixes or {}) do -- Use data.prefixes (fallback to empty)
+		local abbrev = prefix_entry.prefix_abbrev:lower() -- Normalize
+		local word = prefix_entry.prefix_word
+		M.prefixes[abbrev] = word
+	end
+	-- vim.notify("Loaded " .. vim.tbl_count(M.prefixes) .. " prefixes from JSON", vim.log.levels.INFO)
 end
 
 -- Call on load
 load_json_data()
-
-M.prefixes = {
-	["at"] = "anti",
-	["ao"] = "auto",
-	["bi"] = "bi",
-	["co"] = "co",
-	["de"] = "de",
-	["ds"] = "dis",
-	["en"] = "en",
-	["ex"] = "ex",
-	["il"] = "il",
-	["im"] = "im",
-	["in"] = "in",
-	["ir"] = "ir",
-	["it"] = "inter",
-	["mo"] = "mono",
-	["ms"] = "mis",
-	["mu"] = "multi",
-	["nn"] = "non",
-	["ov"] = "over",
-	["pt"] = "post",
-	["re"] = "re",
-	["sb"] = "sub",
-	["sm"] = "semi",
-	["sp"] = "super",
-	["ti"] = "tri",
-	["ts"] = "trans",
-	["ud"] = "under",
-	["un"] = "un",
-}
 
 -- Optional: User command to reload if JSON changes
 vim.api.nvim_create_user_command("ReloadAbbrevJson", load_json_data, { desc = "Reload abbrev data from JSON" })
