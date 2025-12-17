@@ -28,14 +28,14 @@ local function load_json_data()
 	end
 	-- vim.notify("Loaded " .. vim.tbl_count(M.prefixes) .. " prefixes from JSON", vim.log.levels.INFO)
 
-	-- Reverse expansion: Enhanced to handle refixes, roots, and suffixes
+	-- Reverse expansion: Enhanced to handle roots, and suffixes
 	M.try_reverse = function(word)
 		if #word < 2 then
 			return nil
 		end
 		word = word:lower() -- Normalize for case-insensitive match
 
-		-- Match root + suffix on the remaining word
+		-- Match root + suffix
 		local remaining = word
 		for _, entry in ipairs(M.json_data.roots or M.json_data) do -- Handle roots array
 			local root_word_lower = entry.root_word:lower()
@@ -45,10 +45,19 @@ local function load_json_data()
 				local suffix_words = entry.suffix_words or {}
 				for i, s_word in ipairs(suffix_words) do
 					if remainder == s_word:lower() then
+						local base_suffix = ""
+						for j, sa in ipairs(suffix_abbrevs) do
+							if sa == "" then
+								base_suffix = suffix_words[j]
+								break
+							end
+						end
+						local base_form = entry.root_word .. base_suffix
+						local displayed_root = base_form
 						local root_abbrev = entry.root_abbrev
 						local suffix_abbrev = suffix_abbrevs[i]
 						local output = ""
-						output = output .. "root = " .. root_abbrev .. "_" .. entry.root_word
+						output = output .. "root = " .. root_abbrev .. "_" .. displayed_root
 						if suffix_abbrev ~= "" then
 							output = output .. ", suffix = " .. suffix_abbrev .. "_" .. s_word
 						end
