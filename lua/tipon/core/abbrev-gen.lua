@@ -21,16 +21,40 @@ local function load_json_data()
 	M.json_data = data.roots or data -- Export raw JSON for suffix lookups in completion
 	-- data.roots or data allows extractiong from either abolish_obj_data.json or abolish_data.json
 
-	-- Reverse expansion: Simple lookup on M.roots (base words only, no prefixes/suffixes)
+	-- Load prefixes (simple loop, no complications)
+	M.prefixes = {}
+	for _, p in ipairs(data.prefixes or {}) do
+		M.prefixes[p.prefix_abbrev:lower()] = p.prefix_word
+	end
+	-- vim.notify("Loaded " .. vim.tbl_count(M.prefixes) .. " prefixes from JSON", vim.log.levels.INFO)
+
+	-- Reverse expansion: Enhanced to handle refixes, roots, and suffixes
 	M.try_reverse = function(word)
 		if #word < 2 then
 			return nil
 		end
 		word = word:lower() -- Normalize for case-insensitive match
 
-		for root_abbrev, base_word in pairs(M.roots) do
-			if base_word:lower() == word then
-				return root_abbrev:upper() -- Upper for display; adjust as needed
+		-- Match root + suffix on the remaining word
+		local remaining = word
+		for _, entry in ipairs(M.json_data.roots or M.json_data) do -- Handle roots array
+			local root_word_lower = entry.root_word:lower()
+			if remaining:find(root_word_lower, 1, true) == 1 then
+				local remainder = remaining:sub(#root_word_lower + 1)
+				local suffix_abbrevs = entry.suffix_abbrevs or {}
+				local suffix_words = entry.suffix_words or {}
+				for i, s_word in ipairs(suffix_words) do
+					if remainder == s_word:lower() then
+						local root_abbrev = entry.root_abbrev
+						local suffix_abbrev = suffix_abbrevs[i]
+						local output = ""
+						output = output .. "root = " .. root_abbrev .. "_" .. entry.root_word
+						if suffix_abbrev ~= "" then
+							output = output .. ", suffix = " .. suffix_abbrev .. "_" .. s_word
+						end
+						return output
+					end
+				end
 			end
 		end
 
@@ -99,15 +123,6 @@ local function load_json_data()
 			M.two_letter_roots[root_abbrev] = base_word
 		end
 	end
-
-	-- New: Load prefixes (simple loop, no complications)
-	M.prefixes = {}
-	for _, prefix_entry in ipairs(data.prefixes or {}) do -- Use data.prefixes (fallback to empty)
-		local abbrev = prefix_entry.prefix_abbrev:lower() -- Normalize
-		local word = prefix_entry.prefix_word
-		M.prefixes[abbrev] = word
-	end
-	-- vim.notify("Loaded " .. vim.tbl_count(M.prefixes) .. " prefixes from JSON", vim.log.levels.INFO)
 end
 
 -- Call on load

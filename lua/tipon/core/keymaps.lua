@@ -88,16 +88,16 @@ keymap.set("n", "<leader>a", function()
 	if vim.bo.filetype == "markdown" then
 		local abbrev_gen = require("tipon.core.abbrev-gen")
 		local word = vim.fn.expand("<cword>"):lower()
-		local abbrev = abbrev_gen.try_reverse(word)
-		if abbrev then
-			vim.notify("Abbrev: " .. abbrev:upper(), vim.log.levels.INFO) -- Or use popup win
+		local result = abbrev_gen.try_reverse(word)
+		if result then
+			vim.notify("Abbrev breakdown: " .. result, vim.log.levels.INFO) -- Or use a popup
 		else
 			vim.notify("No abbrev found", vim.log.levels.WARN)
 		end
 	else
 		vim.notify("Abbreviations available only in Markdown buffers", vim.log.levels.WARN)
 	end
-end, { desc = "Show abbrev for word" })
+end, { desc = "Show abbrev breakdown for word" })
 
 keymap.set("n", "<leader>1", function()
 	if vim.bo.filetype == "markdown" then
