@@ -13,12 +13,13 @@ local function load_json_data()
 	local json_path = vim.fn.stdpath("config") .. "/abolish_obj_data.json" -- Adjust if needed
 	local lines = vim.fn.readfile(json_path)
 	if #lines == 0 then
-		vim.notify("abolish_data.json not found or empty", vim.log.levels.ERROR)
+		vim.notify("abolish_obj_data.json not found or empty", vim.log.levels.ERROR)
 		return {}
 	end
 	local json_str = table.concat(lines, "\n")
 	local data = vim.fn.json_decode(json_str)
-	M.json_data = data -- Export raw JSON for suffix lookups in completion
+	M.json_data = data.roots or data -- Export raw JSON for suffix lookups in completion
+	-- data.roots or data allows extractiong from either abolish_obj_data.json or abolish_data.json
 
 	-- Reverse expansion: Simple lookup on M.roots (base words only, no prefixes/suffixes)
 	M.try_reverse = function(word)
