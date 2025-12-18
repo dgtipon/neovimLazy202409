@@ -15,6 +15,11 @@ require("lazy").setup({
 	{ import = "tipon.plugins" },
 	{ import = "tipon.plugins.lsp" },
 	{ import = "tipon.colorschemes" },
-	checker = { enabled = true, notify = false },
+	-- For unit testing
+	{ "nvim-lua/plenary.nvim" }, -- For tests
+	checker = { enabled = false }, -- Disable auto-check/sync
 	change_detection = { notify = false },
+	performance = { -- Optimize for faster startup
+		rtp = { reset = false },
+	},
 })

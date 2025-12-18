@@ -66,11 +66,12 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.api.nvim_create_autocmd("BufEnter", {
 	pattern = "*", -- Applies to all buffers
 	callback = function()
-		if vim.bo.filetype == "markdown" then
-			vim.cmd.colorscheme("bamboo")
-		else
-			vim.cmd.colorscheme("gruvbox") -- Change to your preferred default, e.g., "tokyonight-day"
-		end
+	    local scheme = (vim.bo.filetype == "markdown") and "bamboo" or "gruvbox"
+        local ok = pcall(vim.cmd.colorscheme, scheme)
+        if not ok then
+            vim.notify("Colorscheme " .. scheme .. " not found; using fallback", vim.log.levels.WARN)
+            vim.cmd.colorscheme("habamax")  -- Built-in fallback to avoid errors during early boot
+        end
 	end,
 	desc = "Set colorscheme based on filetype (bamboo for markdown)",
 })

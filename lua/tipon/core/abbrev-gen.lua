@@ -143,18 +143,14 @@ vim.api.nvim_create_user_command("ReloadAbbrevJson", load_json_data, { desc = "R
 -- Expansion logic: Lookup in table, handle capitalization
 -- No dictionary checks or dynamic generation
 local function try_expand(abbrev)
-	if #abbrev < 2 then
-		return nil
-	end -- Min length to avoid noise
-
 	local pos = 1
 	local prefixes = {}
 	local capitalize = false
 
 	-- Special handling for first prefix (allow first char uppercase for capitalization)
+	local first_char = abbrev:sub(1, 1)
+	local second_char = abbrev:sub(2, 2)
 	if #abbrev >= 2 then
-		local first_char = abbrev:sub(1, 1)
-		local second_char = abbrev:sub(2, 2)
 		if first_char:match("[a-zA-Z]") and second_char:match("[A-Z]") then
 			local cand = first_char:lower() .. second_char:lower()
 			if M.prefixes[cand] then
@@ -410,5 +406,7 @@ local function list_prefixes()
 end
 
 M.list_prefixes = list_prefixes -- Export for keymap access
+
+M.setup = setup -- Export the setup function for manual calling
 
 return M
