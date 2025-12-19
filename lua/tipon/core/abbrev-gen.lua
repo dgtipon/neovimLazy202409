@@ -151,7 +151,7 @@ local function try_expand(abbrev)
 	local first_char = abbrev:sub(1, 1)
 	local second_char = abbrev:sub(2, 2)
 	if #abbrev >= 2 then
-		if first_char:match("[a-zA-Z]") and second_char:match("[A-Z]") then
+		if first_char:match("[a-zA-Z]") and second_char:match("[A-Z]") then -- True if prefix
 			local cand = first_char:lower() .. second_char:lower()
 			if M.prefixes[cand] then
 				table.insert(prefixes, cand)
@@ -163,11 +163,11 @@ local function try_expand(abbrev)
 		end
 	end
 
-	-- Remaining prefixes: strict lowercase + uppercase
+	-- Test for additional prefixes and save in table: strict lowercase + uppercase
 	while pos + 1 <= #abbrev do
 		local first_char = abbrev:sub(pos, pos)
 		local second_char = abbrev:sub(pos + 1, pos + 1)
-		if first_char:match("[a-z]") and second_char:match("[A-Z]") then
+		if first_char:match("[a-z]") and second_char:match("[A-Z]") then -- True if prefix
 			local cand = first_char .. second_char:lower()
 			if M.prefixes[cand] then
 				table.insert(prefixes, cand)
@@ -179,13 +179,15 @@ local function try_expand(abbrev)
 			break
 		end
 	end
+	-- All prefixes have been removed and stored in table
 
-	-- NEW: Handle capitalization for roots with no prefixes
+	-- Test for capitalization for abbrev with no prefixes
 	if #prefixes == 0 and abbrev:sub(1, 1):match("[A-Z]") then
 		capitalize = true
 	end
 
 	local root_abbrev = abbrev:sub(pos):lower()
+	-- vim.notify("root_abbrev = " .. root_abbrev, vim.log.levels.INFO)
 	if #root_abbrev == 0 then
 		return nil
 	end

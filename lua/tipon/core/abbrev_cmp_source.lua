@@ -5,7 +5,7 @@ source.new = function()
 	return setmetatable({}, { __index = source })
 end
 
--- Trigger on lowercase letters (avoids noise on symbols)
+-- Trigger on lowercase letters and digits (avoids noise on symbols, but supports digit-containing abbrevs like "a2")
 source.get_trigger_characters = function()
 	return {
 		"a",
@@ -34,6 +34,19 @@ source.get_trigger_characters = function()
 		"x",
 		"y",
 		"z",
+		"0",
+		"1",
+		"2",
+		"3",
+		"4",
+		"5",
+		"6",
+		"7",
+		"8",
+		"9",
+		-- Optional: Add uppercase if needed for auto-trigger on capitalized inputs
+		-- "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+		-- "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
 	}
 end
 
@@ -90,23 +103,21 @@ source.complete = function(self, params, callback)
 		end
 	end
 
-	-- NEW: Handle capitalization for roots with no prefixes
+	-- Build prefix word string
+	local prefix_str = ""
+	for _, p in ipairs(prefixes) do
+		prefix_str = prefix_str .. abbrev_gen.prefixes[p]
+	end
+
+	-- Handle capitalization for roots with no prefixes
 	if #prefixes == 0 and input:sub(1, 1):match("[A-Z]") then
 		capitalize = true
 	end
 
 	local root_input = input:sub(pos):lower()
-	-- If no root after prefixes and input is short, skip
-	if #root_input < 1 then
+	-- vim.notify("root-input = " .. root_input, vim.log.levels.WARN)
+	if #root_input < 1 then -- If no root after prefixes and input is short, skip
 		return callback({})
-	end
-
-	local items = {}
-
-	-- Build prefix word string
-	local prefix_str = ""
-	for _, p in ipairs(prefixes) do
-		prefix_str = prefix_str .. abbrev_gen.prefixes[p]
 	end
 
 	-- Find the longest prefix of root_input that is a root
@@ -114,12 +125,16 @@ source.complete = function(self, params, callback)
 	local partial_suffix = ""
 	for i = #root_input, 1, -1 do
 		local candidate = root_input:sub(1, i)
+		-- vim.notify("candidate = " .. candidate, vim.log.levels.WARN)
 		if abbrev_gen.roots[candidate] then
 			root = candidate
+			-- vim.notify("root = " .. root, vim.log.levels.WARN)
 			partial_suffix = root_input:sub(i + 1)
 			break
 		end
 	end
+
+	local items = {}
 
 	-- If a root prefix is found, add matching suffixed forms incrementally (exact + next letter extensions)
 	if root then
