@@ -11451,7 +11451,7 @@
     },
     {
       "root_abbrev": "d",
-      "suffix_abbrevs": ["", "S", "N", "G", "X", "SX"],
+      "suffix_abbrevs": ["", "s", "d", "g", "x", "sx"],
       "root_word": "do",
       "suffix_words": ["", "es", "ne", "ing", "n't", "esn't"]
     },
