@@ -4180,7 +4180,7 @@
       "root_abbrev": "c",
       "suffix_abbrevs": ["", "t", "x"],
       "root_word": "can",
-      "suffix_words": ["", "not", "_t"]
+      "suffix_words": ["", "not", "'t"]
     },
     {
       "root_abbrev": "cnd",
@@ -20879,7 +20879,7 @@
       "suffix_words": ["", "s", "ic", "ically"]
     },
     {
-      "root_abbrev": "mtl",
+      "root_abbrev": "mtcu",
       "suffix_abbrevs": ["", "y", "ss", "sss"],
       "root_word": "meticulous",
       "suffix_words": ["", "ly", "ness", "nesses"]
@@ -31228,7 +31228,7 @@
       ]
     },
     {
-      "root_abbrev": "spp",
+      "root_abbrev": "spo",
       "suffix_abbrevs": ["", "s", "d", "g", "p", "ps"],
       "root_word": "sponsor",
       "suffix_words": ["", "s", "ed", "ing", "ship", "ships"]
@@ -35619,8 +35619,8 @@
         "is",
         "o",
         "os",
-        "s",
-        "ss"
+        "st",
+        "sts"
       ],
       "root_word": "with",
       "suffix_words": [
@@ -35881,35 +35881,129 @@
       "suffix_abbrevs": [""],
       "root_word": "zeroing",
       "suffix_words": ["", "s", "ship", "ships"]
+    },
+    {
+      "root_abbrev": "sp",
+      "suffix_abbrevs": [""],
+      "root_word": "spectrum",
+      "suffix_words": [""]
+    },
+    {
+      "root_abbrev": "mtl",
+      "suffix_abbrevs": ["", "s", "ly"],
+      "root_word": "mutual",
+      "suffix_words": ["", "s", "ly"]
     }
   ],
   "prefixes": [
-    { "prefix_abbrev": "at", "prefix_word": "anti" },
-    { "prefix_abbrev": "ao", "prefix_word": "auto" },
-    { "prefix_abbrev": "bi", "prefix_word": "bi" },
-    { "prefix_abbrev": "co", "prefix_word": "co" },
-    { "prefix_abbrev": "de", "prefix_word": "de" },
-    { "prefix_abbrev": "ds", "prefix_word": "dis" },
-    { "prefix_abbrev": "en", "prefix_word": "en" },
-    { "prefix_abbrev": "ex", "prefix_word": "ex" },
-    { "prefix_abbrev": "il", "prefix_word": "il" },
-    { "prefix_abbrev": "im", "prefix_word": "im" },
-    { "prefix_abbrev": "in", "prefix_word": "in" },
-    { "prefix_abbrev": "ir", "prefix_word": "ir" },
-    { "prefix_abbrev": "it", "prefix_word": "inter" },
-    { "prefix_abbrev": "mo", "prefix_word": "mono" },
-    { "prefix_abbrev": "ms", "prefix_word": "mis" },
-    { "prefix_abbrev": "mu", "prefix_word": "multi" },
-    { "prefix_abbrev": "nn", "prefix_word": "non" },
-    { "prefix_abbrev": "ov", "prefix_word": "over" },
-    { "prefix_abbrev": "pt", "prefix_word": "post" },
-    { "prefix_abbrev": "re", "prefix_word": "re" },
-    { "prefix_abbrev": "sb", "prefix_word": "sub" },
-    { "prefix_abbrev": "sm", "prefix_word": "semi" },
-    { "prefix_abbrev": "sp", "prefix_word": "super" },
-    { "prefix_abbrev": "ti", "prefix_word": "tri" },
-    { "prefix_abbrev": "ts", "prefix_word": "trans" },
-    { "prefix_abbrev": "ud", "prefix_word": "under" },
-    { "prefix_abbrev": "un", "prefix_word": "un" }
+    {
+      "prefix_abbrev": "at",
+      "prefix_word": "anti"
+    },
+    {
+      "prefix_abbrev": "ao",
+      "prefix_word": "auto"
+    },
+    {
+      "prefix_abbrev": "bi",
+      "prefix_word": "bi"
+    },
+    {
+      "prefix_abbrev": "co",
+      "prefix_word": "co"
+    },
+    {
+      "prefix_abbrev": "de",
+      "prefix_word": "de"
+    },
+    {
+      "prefix_abbrev": "ds",
+      "prefix_word": "dis"
+    },
+    {
+      "prefix_abbrev": "en",
+      "prefix_word": "en"
+    },
+    {
+      "prefix_abbrev": "ex",
+      "prefix_word": "ex"
+    },
+    {
+      "prefix_abbrev": "il",
+      "prefix_word": "il"
+    },
+    {
+      "prefix_abbrev": "im",
+      "prefix_word": "im"
+    },
+    {
+      "prefix_abbrev": "in",
+      "prefix_word": "in"
+    },
+    {
+      "prefix_abbrev": "ir",
+      "prefix_word": "ir"
+    },
+    {
+      "prefix_abbrev": "it",
+      "prefix_word": "inter"
+    },
+    {
+      "prefix_abbrev": "mo",
+      "prefix_word": "mono"
+    },
+    {
+      "prefix_abbrev": "ms",
+      "prefix_word": "mis"
+    },
+    {
+      "prefix_abbrev": "mu",
+      "prefix_word": "multi"
+    },
+    {
+      "prefix_abbrev": "nn",
+      "prefix_word": "non"
+    },
+    {
+      "prefix_abbrev": "ov",
+      "prefix_word": "over"
+    },
+    {
+      "prefix_abbrev": "pt",
+      "prefix_word": "post"
+    },
+    {
+      "prefix_abbrev": "re",
+      "prefix_word": "re"
+    },
+    {
+      "prefix_abbrev": "sb",
+      "prefix_word": "sub"
+    },
+    {
+      "prefix_abbrev": "sm",
+      "prefix_word": "semi"
+    },
+    {
+      "prefix_abbrev": "sp",
+      "prefix_word": "super"
+    },
+    {
+      "prefix_abbrev": "ti",
+      "prefix_word": "tri"
+    },
+    {
+      "prefix_abbrev": "ts",
+      "prefix_word": "trans"
+    },
+    {
+      "prefix_abbrev": "ud",
+      "prefix_word": "under"
+    },
+    {
+      "prefix_abbrev": "un",
+      "prefix_word": "un"
+    }
   ]
 }
+

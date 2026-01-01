@@ -69,6 +69,7 @@ source.complete = function(self, params, callback)
 	local prefix_abbrev_str = ""
 
 	-- Special handling for first prefix (allow first char uppercase for capitalization)
+	-- If the first two letters are a prefix, strip off and insert in table "prefixes"
 	if #input >= 2 then
 		local first_char = input:sub(1, 1)
 		local second_char = input:sub(2, 2)
@@ -85,7 +86,7 @@ source.complete = function(self, params, callback)
 		end
 	end
 
-	-- Remaining prefixes: strict lowercase + uppercase
+	-- Remaining prefixes: strict lowercase + uppercase; save each prefix in table "prefixes"
 	while pos + 1 <= #input do
 		local first_char = input:sub(pos, pos)
 		local second_char = input:sub(pos + 1, pos + 1)
@@ -103,24 +104,24 @@ source.complete = function(self, params, callback)
 		end
 	end
 
-	-- Build prefix word string
+	-- Expand each prefix abbreviation and concatinate into prefix word string "prefix_str"
 	local prefix_str = ""
 	for _, p in ipairs(prefixes) do
 		prefix_str = prefix_str .. abbrev_gen.prefixes[p]
 	end
 
-	-- Handle capitalization for roots with no prefixes
+	-- If no prefixes, test and set capitalization for root word
 	if #prefixes == 0 and input:sub(1, 1):match("[A-Z]") then
 		capitalize = true
 	end
 
 	local root_input = input:sub(pos):lower()
 	-- vim.notify("root-input = " .. root_input, vim.log.levels.WARN)
-	if #root_input < 1 then -- If no root after prefixes and input is short, skip
+	if #root_input < 1 then -- If no root after removing prefixes, exit this function
 		return callback({})
 	end
 
-	-- Find the longest prefix of root_input that is a root
+	-- Find the longest begining of root_input that is a root
 	local root = nil
 	local partial_suffix = ""
 	for i = #root_input, 1, -1 do
@@ -136,7 +137,7 @@ source.complete = function(self, params, callback)
 
 	local items = {}
 
-	-- If a root prefix is found, add matching suffixed forms incrementally (exact + next letter extensions)
+	-- If a root is found, add matching suffixed forms incrementally (exact + next letter extensions)
 	if root then
 		-- Find the matching entry in json_data
 		local entry = nil
