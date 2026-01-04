@@ -116,20 +116,12 @@ source.complete = function(self, params, callback)
 	end
 
 	local root_input = input:sub(pos):lower()
-	-- vim.notify("root-input = " .. root_input, vim.log.levels.WARN)
-	if #root_input < 1 then -- If no root after removing prefixes, exit this function
-		return callback({})
-	end
-
-	-- Find the longest begining of root_input that is a root
 	local root = nil
 	local partial_suffix = ""
-	for i = #root_input, 1, -1 do
-		local candidate = root_input:sub(1, i)
-		-- vim.notify("candidate = " .. candidate, vim.log.levels.WARN)
-		if abbrev_gen.roots[candidate] then
-			root = candidate
-			-- vim.notify("root = " .. root, vim.log.levels.WARN)
+	for i = #root_input, 1, -1 do -- CHANGED: Start from longest possible prefix
+		local cand = root_input:sub(1, i)
+		if abbrev_gen.roots[cand] then
+			root = cand
 			partial_suffix = root_input:sub(i + 1)
 			break
 		end
@@ -151,14 +143,34 @@ source.complete = function(self, params, callback)
 			local suffix_abbrevs = entry.suffix_abbrevs or {}
 			local suffix_words = entry.suffix_words or {}
 			local matched_suffixes = {}
+
 			for i, s_abbrev in ipairs(suffix_abbrevs) do
+				local include = false
 				if s_abbrev:find(partial_suffix, 1, true) == 1 and #s_abbrev <= #partial_suffix + 1 then
+					include = true -- Existing incremental match
+				elseif partial_suffix == "" and #s_abbrev == 2 then
+					-- NEW: For empty partial, check if two-letter is independent based on previous in list
+					if i > 1 then
+						local prev_first = suffix_abbrevs[i - 1]:sub(1, 1):lower()
+						local curr_first = s_abbrev:sub(1, 1):lower()
+						if prev_first ~= curr_first then
+							include = true -- Different from previous → independent/group head, include
+						end -- Same as previous → part of series/extension, exclude
+					else
+						include = true -- Rare: If first entry is two-letter, include
+					end
+				end
+
+				if include then
 					local full_abbrev = root .. s_abbrev
 					local s_word = suffix_words[i] or ""
 					local full_word = prefix_str .. entry.root_word .. s_word
 					local adjusted_word = capitalize and (full_word:sub(1, 1):upper() .. full_word:sub(2)) or full_word
 					table.insert(matched_suffixes, {
-						label = (prefix_abbrev_str .. full_abbrev) .. "_" .. adjusted_word,
+						label = adjusted_word,
+						detail = "[" .. (prefix_abbrev_str .. full_abbrev):upper() .. "]",
+						filterText = (prefix_abbrev_str .. full_abbrev),
+						sortText = adjusted_word:lower(),
 						kind = vim.lsp.protocol.CompletionItemKind.Text,
 						insertText = adjusted_word,
 						documentation = (
@@ -168,10 +180,12 @@ source.complete = function(self, params, callback)
 					})
 				end
 			end
-			-- Sort by label for consistent order
+
+			-- NEW: Sort matched_suffixes alphabetically by label for consistency
 			table.sort(matched_suffixes, function(a, b)
 				return a.label < b.label
 			end)
+
 			for _, item in ipairs(matched_suffixes) do
 				table.insert(items, item)
 			end
@@ -185,7 +199,10 @@ source.complete = function(self, params, callback)
 			local full_word = prefix_str .. word
 			local adjusted_word = capitalize and (full_word:sub(1, 1):upper() .. full_word:sub(2)) or full_word
 			table.insert(items, {
-				label = (prefix_abbrev_str .. abbrev) .. "_" .. adjusted_word,
+				label = adjusted_word,
+				detail = "[" .. (prefix_abbrev_str .. abbrev):upper() .. "]",
+				filterText = (prefix_abbrev_str .. abbrev),
+				sortText = adjusted_word:lower(),
 				kind = vim.lsp.protocol.CompletionItemKind.Text,
 				insertText = adjusted_word,
 				documentation = "Partial root match: " .. abbrev,
@@ -198,9 +215,12 @@ source.complete = function(self, params, callback)
 		local dynamic_word = abbrev_gen.try_expand(input) -- Pass full input; try_expand handles prefixes
 		if dynamic_word then
 			table.insert(items, {
-				label = input:lower() .. "_" .. dynamic_word, -- Consistent format
+				label = dynamic_word,
+				detail = "[" .. input:upper() .. "]",
+				filterText = input:lower(),
+				sortText = dynamic_word:lower(),
 				kind = vim.lsp.protocol.CompletionItemKind.Text,
-				insertText = dynamic_word, -- Insert only the word
+				insertText = dynamic_word,
 				documentation = "Dynamic expansion",
 			})
 		end

@@ -1,6 +1,6 @@
 return {
 	"hrsh7th/nvim-cmp",
-	event = "InsertEnter",
+	event = { "InsertEnter", "CmdlineEnter" },
 	dependencies = {
 		"hrsh7th/cmp-buffer", -- source for text in buffer
 		"hrsh7th/cmp-path", -- source for file system paths
@@ -52,12 +52,23 @@ return {
 				{ name = "path" }, -- file system paths
 			}),
 
-			-- configure lspkind for vs-code like pictograms in completion menu
 			formatting = {
-				format = lspkind.cmp_format({
-					maxwidth = 50,
-					ellipsis_char = "...",
-				}),
+				fields = { "kind", "abbr", "menu" }, -- Ensure 'menu' is included for the right-side display
+				format = function(entry, vim_item)
+					-- Handle kind icons with lspkind (icons only, not text kind)
+					local lspkind = require("lspkind")
+					vim_item = lspkind.cmp_format({ with_text = false })(entry, vim_item) -- Icons only, no text kind
+
+					-- Set menu to detail if available (this shows your abbrevs)
+					local detail = entry:get_completion_item().detail
+					if detail then
+						vim_item.menu = " " .. detail -- Prepend space for spacing
+					else
+						vim_item.menu = " [" .. (entry.source.name or "Other") .. "]" -- Fallback to source name
+					end
+
+					return vim_item
+				end,
 			},
 		})
 
