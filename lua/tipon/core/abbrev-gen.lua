@@ -140,21 +140,37 @@ load_json_data()
 -- Optional: User command to reload if JSON changes
 vim.api.nvim_create_user_command("ReloadAbbrevJson", load_json_data, { desc = "Reload abbrev data from JSON" })
 
--- Expansion logic: Lookup in table, handle capitalization
--- No dictionary checks or dynamic generation
-local function try_expand(abbrev)
+-- try_expand: Attempt to expand an abbreviation (with prefixes and capitalization)
+M.try_expand = function(original_input)
+	if #original_input < 1 then -- Allow single-letter abbreviations
+		return nil
+	end
+
+	local input = original_input:lower() -- Normalize for matching/lookups only
+
+	-- NEW: Possessive detection (uses original for "S" case)
+	local possessive = false
+	if input:sub(-1) == "s" and original_input:sub(-1) == "S" then
+		possessive = true
+		input = input:sub(1, -2)
+		original_input = original_input:sub(1, -2)
+	end
+
 	local pos = 1
 	local prefixes = {}
 	local capitalize = false
+	local prefix_abbrev_str = "" -- Optional, for debug/detail
 
-	-- Special handling for first prefix (allow first char uppercase for capitalization)
-	local first_char = abbrev:sub(1, 1)
-	local second_char = abbrev:sub(2, 2)
-	if #abbrev >= 2 then
-		if first_char:match("[a-zA-Z]") and second_char:match("[A-Z]") then -- True if prefix
+	-- Prefix extraction: Use ORIGINAL input for case-sensitive detection
+	-- Special handling for first prefix (allows uppercase first char)
+	if #original_input >= 2 then
+		local first_char = original_input:sub(1, 1)
+		local second_char = original_input:sub(2, 2)
+		if first_char:match("[a-zA-Z]") and second_char:match("[A-Z]") then
 			local cand = first_char:lower() .. second_char:lower()
 			if M.prefixes[cand] then
 				table.insert(prefixes, cand)
+				prefix_abbrev_str = prefix_abbrev_str .. cand
 				pos = 3
 				if first_char:match("[A-Z]") then
 					capitalize = true
@@ -163,14 +179,15 @@ local function try_expand(abbrev)
 		end
 	end
 
-	-- Test for additional prefixes and save in table: strict lowercase + uppercase
-	while pos + 1 <= #abbrev do
-		local first_char = abbrev:sub(pos, pos)
-		local second_char = abbrev:sub(pos + 1, pos + 1)
-		if first_char:match("[a-z]") and second_char:match("[A-Z]") then -- True if prefix
-			local cand = first_char .. second_char:lower()
+	-- Remaining prefixes (strict lowercase first + uppercase second)
+	while pos + 1 <= #original_input do
+		local first_char = original_input:sub(pos, pos)
+		local second_char = original_input:sub(pos + 1, pos + 1)
+		if first_char:match("[a-z]") and second_char:match("[A-Z]") then
+			local cand = first_char:lower() .. second_char:lower()
 			if M.prefixes[cand] then
 				table.insert(prefixes, cand)
+				prefix_abbrev_str = prefix_abbrev_str .. cand
 				pos = pos + 2
 			else
 				break
@@ -179,38 +196,38 @@ local function try_expand(abbrev)
 			break
 		end
 	end
-	-- All prefixes have been removed and stored in table
 
-	-- Test for capitalization for abbrev with no prefixes
-	if #prefixes == 0 and abbrev:sub(1, 1):match("[A-Z]") then
+	-- If no prefixes, check root capitalization
+	if #prefixes == 0 and original_input:sub(1, 1):match("[A-Z]") then
 		capitalize = true
 	end
 
-	local root_abbrev = abbrev:sub(pos):lower()
-	-- vim.notify("root_abbrev = " .. root_abbrev, vim.log.levels.INFO)
-	if #root_abbrev == 0 then
+	-- Root from normalized input (after prefixes stripped)
+	local root_input = input:sub(pos)
+	local expanded = M.abbrevs[root_input]
+	if not expanded then
 		return nil
 	end
 
-	local expanded_root = M.abbrevs[root_abbrev]
-	if not expanded_root then
-		return nil
-	end
-
+	-- Build prefix string
 	local prefix_str = ""
 	for _, p in ipairs(prefixes) do
 		prefix_str = prefix_str .. M.prefixes[p]
 	end
 
-	local full_expanded = prefix_str .. expanded_root
+	-- Final word
+	local result = prefix_str .. expanded
 	if capitalize then
-		full_expanded = full_expanded:sub(1, 1):upper() .. full_expanded:sub(2)
+		result = result:sub(1, 1):upper() .. result:sub(2)
 	end
 
-	return full_expanded
-end
+	-- Append possessive if flagged
+	if possessive then
+		result = result .. "'s"
+	end
 
-M.try_expand = try_expand -- Export for use in completion source
+	return result
+end
 
 -- Setup buffer-local mapping for Markdown files
 local function setup_markdown_keymaps()
@@ -245,7 +262,7 @@ M.expand_abbrev = function(trigger_char)
 		return trigger_char
 	end
 
-	local expanded = try_expand(word_before)
+	local expanded = M.try_expand(word_before)
 	if not expanded then
 		return trigger_char
 	end
