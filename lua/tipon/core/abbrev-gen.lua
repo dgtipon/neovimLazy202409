@@ -1,7 +1,5 @@
 -- Abbrev-gen: Abbreviation expansion for Markdown using explicit JSON mappings
 
--- vim.notify("Abbrev-gen version 2.0 loaded (JSON-based expansions)", vim.log.levels.INFO)
-
 local M = {} -- Module table
 
 -- Single shared table for lookups (used by try_expand and future completion)
@@ -258,6 +256,8 @@ M.expand_abbrev = function(trigger_char)
 	local col = pos[2]
 	local word_before = line:sub(1, col):match("%w+$")
 
+	-- vim.notify("characters before" .. line:sub(1, col), vim.log.levels.INFO)
+
 	if not word_before then
 		return trigger_char
 	end
@@ -426,6 +426,79 @@ end
 
 M.list_prefixes = list_prefixes -- Export for keymap access
 
-M.setup = setup -- Export the setup function for manual calling
+-- Setup function for initialization and optional features
+function M.setup(opts)
+	opts = opts or {}
+	local json_path = opts.json_path or vim.fn.stdpath("config") .. "/abolish_obj_data.json"
+	load_json_data(json_path) -- Call your loading function (extract it if not already a separate local func)
+
+	if opts.enable_keymaps then
+		vim.api.nvim_create_autocmd("FileType", {
+			pattern = "markdown",
+			callback = function()
+				local bufnr = vim.api.nvim_get_current_buf()
+				local keymap = vim.keymap -- For conciseness, as in your keymaps.lua
+
+				keymap.set("n", "<leader>a", function()
+					local word = vim.fn.expand("<cword>"):lower()
+					local result = M.try_reverse(word)
+					if result then
+						-- Create a scratch buffer for the popup
+						local buf = vim.api.nvim_create_buf(false, true)
+						local lines = { "Abbrev breakdown: " .. result } -- Single line for simplicity
+						vim.api.nvim_buf_set_lines(buf, 0, -1, true, lines)
+						vim.api.nvim_buf_set_option(buf, "buftype", "nofile")
+						vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe")
+						vim.api.nvim_buf_set_option(buf, "modifiable", false)
+
+						-- Calculate dimensions: Small popup, auto-width based on content
+						local max_line_len = math.max(30, #lines[1] + 4) -- Min 30 cols, plus padding
+						local width = math.min(max_line_len, math.floor(vim.o.columns * 0.6))
+						local height = #lines + 2 -- Content + padding
+						local popup_opts = {
+							relative = "editor",
+							width = width,
+							height = height,
+							col = (vim.o.columns - width) / 2,
+							row = (vim.o.lines - height) / 2,
+							style = "minimal",
+							border = "rounded",
+							title = "Abbrev Breakdown",
+							title_pos = "center",
+						}
+
+						-- Open the floating window
+						local win = vim.api.nvim_open_win(buf, true, popup_opts)
+						vim.api.nvim_win_set_option(win, "winhl", "NormalFloat:Normal,FloatBorder:Normal")
+
+						-- Keymaps to close (Esc or q)
+						vim.keymap.set("n", "<Esc>", function()
+							vim.api.nvim_win_close(win, true)
+						end, { buffer = buf, silent = true })
+						vim.keymap.set("n", "q", function()
+							vim.api.nvim_win_close(win, true)
+						end, { buffer = buf, silent = true })
+					else
+						vim.notify("No abbrev found", vim.log.levels.WARN)
+					end
+				end, { buffer = bufnr, desc = "Show abbrev breakdown for word" })
+
+				keymap.set(
+					"n",
+					"<leader>1",
+					M.list_one_letter_abbrevs,
+					{ buffer = bufnr, desc = "Show all One-letter root abbrevs" }
+				)
+				keymap.set(
+					"n",
+					"<leader>2",
+					M.list_two_letter_abbrevs,
+					{ buffer = bufnr, desc = "Show all two-letter root abbrevs" }
+				)
+				keymap.set("n", "<leader>p", M.list_prefixes, { buffer = bufnr, desc = "Show all prefix abbrevs" })
+			end,
+		})
+	end
+end
 
 return M

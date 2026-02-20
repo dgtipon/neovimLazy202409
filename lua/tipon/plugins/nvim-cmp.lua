@@ -83,13 +83,13 @@ return {
 				{ name = "buffer" },
 				{ name = "path" },
 				{
-					name = "abbrev_pop",
+					name = "abbrev",
 					priority = 1000, -- Highest priority for your custom source
 					keyword_length = 2, -- Trigger after 2 chars as before
 				},
 			}),
 		})
 		-- Register the custom source (update path to core)
-		cmp.register_source("abbrev_pop", require("tipon.core.abbrev_cmp_source").new())
+		cmp.register_source("abbrev", require("tipon.core.abbrev_cmp_source").new())
 	end,
 }
