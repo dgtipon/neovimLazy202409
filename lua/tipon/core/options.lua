@@ -108,20 +108,6 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 })
 
--- Autocmd for filetype-specific colorscheme (added for Markdown bamboo)
-vim.api.nvim_create_autocmd("BufEnter", {
-	pattern = "*", -- Applies to all buffers
-	callback = function()
-		local scheme = (vim.bo.filetype == "markdown") and "bamboo" or "gruvbox"
-		local ok = pcall(vim.cmd.colorscheme, scheme)
-		if not ok then
-			vim.notify("Colorscheme " .. scheme .. " not found; using fallback", vim.log.levels.WARN)
-			vim.cmd.colorscheme("habamax") -- Built-in fallback to avoid errors during early boot
-		end
-	end,
-	desc = "Set colorscheme based on filetype (bamboo for markdown)",
-})
-
 -- Auto-save on InsertLeave for Markdown buffers (only if modified)
 vim.api.nvim_create_autocmd("InsertLeave", {
 	group = vim.api.nvim_create_augroup("MarkdownAutoSave", { clear = true }),
@@ -131,4 +117,52 @@ vim.api.nvim_create_autocmd("InsertLeave", {
 		end
 	end,
 	desc = "Auto-save Markdown files on leaving insert mode",
+})
+
+-- Autocmd for filetype-specific colorscheme (added for Markdown bamboo)
+vim.api.nvim_create_autocmd("BufEnter", {
+	pattern = "*", -- Applies to all buffers
+	callback = function()
+		local scheme = (vim.bo.filetype == "markdown") and "bamboo" or "gruvbox"
+		local ok = pcall(vim.cmd.colorscheme, scheme)
+		-- vim.notify("Colorscheme " .. scheme, vim.log.levels.WARN)
+		if not ok then
+			vim.notify("Colorscheme " .. scheme .. " not found; using fallback", vim.log.levels.WARN)
+			vim.cmd.colorscheme("habamax") -- Built-in fallback to avoid errors during early boot
+		end
+	end,
+	desc = "Set colorscheme based on filetype (bamboo for markdown)",
+})
+
+-- Set cursor color scheme only for Markdown files with light background
+vim.api.nvim_create_autocmd("ColorScheme", {
+	pattern = "*", -- Applies tabstop all colorschemes
+	callback = function()
+		if vim.bo.filetype == "markdown" and vim.o.background == "light" then
+			-- Cursor: Black bg, white fg, no reverse
+			vim.api.nvim_set_hl(0, "Cursor", { fg = "#FFFFFF", bg = "#000000" })
+			-- CurSearch (current match under cursor): Force no inversion, match Cursor colors
+			vim.api.nvim_set_hl(0, "CurSearch", { bg = "#FFFFFF", fg = "#000000" })
+		else
+			vim.api.nvim_set_hl(0, "Cursor", { bg = "#FFFFFF", fg = "#000000" })
+			vim.api.nvim_set_hl(0, "CurSearch", { fg = "#FFFFFF", bg = "#000000" })
+		end
+	end,
+	desc = "Customize highlights for consistent cursor in Markdown without inversion",
+})
+
+-- Keep a BufEnter for initial buffer load (in case ColorScheme doesn't cover it)
+vim.api.nvim_create_autocmd("BufEnter", {
+	pattern = "*.md", -- Markdown-only
+	callback = function()
+		if vim.o.background == "light" then
+			-- Same highlights as above
+			vim.api.nvim_set_hl(0, "Cursor", { fg = "#FFFFFF", bg = "#000000" })
+			vim.api.nvim_set_hl(0, "CurSearch", { bg = "#FFFFFF", fg = "#000000" })
+		else
+			vim.api.nvim_set_hl(0, "Cursor", { bg = "#FFFFFF", fg = "#000000" })
+			vim.api.nvim_set_hl(0, "CurSearch", { fg = "#FFFFFF", bg = "#000000" })
+		end
+	end,
+	desc = "Customize highlights for consistent cursor on entering Markdown buffers",
 })
