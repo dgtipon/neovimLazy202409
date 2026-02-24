@@ -123,6 +123,7 @@ vim.api.nvim_create_autocmd("InsertLeave", {
 vim.api.nvim_create_autocmd("BufEnter", {
 	pattern = "*", -- Applies to all buffers
 	callback = function()
+		-- Markdown filetype use bamboo colorscheme, all others use gruvbox
 		local scheme = (vim.bo.filetype == "markdown") and "bamboo" or "gruvbox"
 		local ok = pcall(vim.cmd.colorscheme, scheme)
 		-- vim.notify("Colorscheme " .. scheme, vim.log.levels.WARN)
@@ -130,39 +131,41 @@ vim.api.nvim_create_autocmd("BufEnter", {
 			vim.notify("Colorscheme " .. scheme .. " not found; using fallback", vim.log.levels.WARN)
 			vim.cmd.colorscheme("habamax") -- Built-in fallback to avoid errors during early boot
 		end
+
+		if vim.bo.filetype == "markdown" then
+			-- Cursor retains the same shade when within search words.
+			if vim.o.background == "light" then
+				vim.api.nvim_set_hl(0, "Cursor", { fg = "#FFFFFF", bg = "#000000" })
+				vim.api.nvim_set_hl(0, "CurSearch", { bg = "#FFFFFF", fg = "#000000" })
+			else -- background dark
+				vim.api.nvim_set_hl(0, "Cursor", { bg = "#FFFFFF", fg = "#000000" })
+				vim.api.nvim_set_hl(0, "CurSearch", { fg = "#FFFFFF", bg = "#000000" })
+			end
+		end
+
+		-- Re-initialize Lualine so the status line gets correct colors immediately
+		require("lualine").setup()
 	end,
-	desc = "Set colorscheme based on filetype (bamboo for markdown)",
+	desc = "Set colorscheme and cursor highlights only buffer enter",
 })
 
 -- Set cursor color scheme only for Markdown files with light background
 vim.api.nvim_create_autocmd("ColorScheme", {
 	pattern = "*", -- Applies tabstop all colorschemes
 	callback = function()
-		if vim.bo.filetype == "markdown" and vim.o.background == "light" then
-			-- Cursor: Black bg, white fg, no reverse
-			vim.api.nvim_set_hl(0, "Cursor", { fg = "#FFFFFF", bg = "#000000" })
-			-- CurSearch (current match under cursor): Force no inversion, match Cursor colors
-			vim.api.nvim_set_hl(0, "CurSearch", { bg = "#FFFFFF", fg = "#000000" })
-		else
-			vim.api.nvim_set_hl(0, "Cursor", { bg = "#FFFFFF", fg = "#000000" })
-			vim.api.nvim_set_hl(0, "CurSearch", { fg = "#FFFFFF", bg = "#000000" })
+		if vim.bo.filetype == "markdown" then
+			-- Cursor retains the same shade when within search words.
+			if vim.o.background == "light" then
+				vim.api.nvim_set_hl(0, "Cursor", { fg = "#FFFFFF", bg = "#000000" })
+				vim.api.nvim_set_hl(0, "CurSearch", { bg = "#FFFFFF", fg = "#000000" })
+			else -- background dark
+				vim.api.nvim_set_hl(0, "Cursor", { bg = "#FFFFFF", fg = "#000000" })
+				vim.api.nvim_set_hl(0, "CurSearch", { fg = "#FFFFFF", bg = "#000000" })
+			end
 		end
-	end,
-	desc = "Customize highlights for consistent cursor in Markdown without inversion",
-})
 
--- Keep a BufEnter for initial buffer load (in case ColorScheme doesn't cover it)
-vim.api.nvim_create_autocmd("BufEnter", {
-	pattern = "*.md", -- Markdown-only
-	callback = function()
-		if vim.o.background == "light" then
-			-- Same highlights as above
-			vim.api.nvim_set_hl(0, "Cursor", { fg = "#FFFFFF", bg = "#000000" })
-			vim.api.nvim_set_hl(0, "CurSearch", { bg = "#FFFFFF", fg = "#000000" })
-		else
-			vim.api.nvim_set_hl(0, "Cursor", { bg = "#FFFFFF", fg = "#000000" })
-			vim.api.nvim_set_hl(0, "CurSearch", { fg = "#FFFFFF", bg = "#000000" })
-		end
+		-- Re-initialize Lualine so the status line gets correct colors immediately
+		require("lualine").setup()
 	end,
-	desc = "Customize highlights for consistent cursor on entering Markdown buffers",
+	desc = "Cursor highlights and Lualine refresh only colorscheme change",
 })
