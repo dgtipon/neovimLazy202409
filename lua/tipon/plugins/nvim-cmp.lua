@@ -47,9 +47,10 @@ return {
 			-- sources for autocompletion (global)
 			sources = cmp.config.sources({
 				{ name = "nvim_lsp" },
-				{ name = "luasnip" }, -- snippets
-				{ name = "buffer" }, -- text within current buffer
-				{ name = "path" }, -- file system paths
+				{ name = "luasnip" }, -- For luasnip users.
+				{ name = "buffer" },
+				{ name = "path" },
+				{ name = "abbrev_gen" }, -- ←←← ADD THIS LINE
 			}),
 
 			formatting = {
@@ -83,13 +84,11 @@ return {
 				{ name = "buffer" },
 				{ name = "path" },
 				{
-					name = "abbrev",
+					name = "abbrev_gen",
 					priority = 1000, -- Highest priority for your custom source
 					keyword_length = 2, -- Trigger after 2 chars as before
 				},
 			}),
 		})
-		-- Register the custom source (update path to core)
-		cmp.register_source("abbrev", require("tipon.core.abbrev_cmp_source").new())
 	end,
 }
