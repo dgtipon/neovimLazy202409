@@ -1,6 +1,5 @@
 return {
-	dir = "~/Documents/Projects/abbrev-gen.nvim",
-	dev = true, -- Enables dev mode and Lazy treats as local and skips git checks
+	"dgtipon/abbrev-gen.nvim",
 	ft = "markdown",
 	dependencies = { "hrsh7th/nvim-cmp" },
 	config = function()
